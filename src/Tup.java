@@ -12,27 +12,27 @@ public class Tup {
         this.list = new ArrayList<Attr>();
     }
 
-    private void addAttr(Attr attr) {
+    public void addAttr(Attr attr) {
         this.list.add(attr);
     }
 
-    private int getLength() {
+    public int getLength() {
         return this.list.size();
     }
 
-    private Attr getAtPos(int pos) {
+    public Attr getAtPos(int pos) {
         return this.list.get(pos);
     }
 
-    private Pair getValAtPos(int pos) {
+    public Pair getValAtPos(int pos) {
         return this.list.get(pos).getValue();
     }
 
-    private int getTypeAtPos(int pos) {
+    public int getTypeAtPos(int pos) {
         return this.list.get(pos).getType();
     }
 
-    private Attr setAtPos(int pos, Attr attr) {
+    public Attr setAtPos(int pos, Attr attr) {
         return this.list.set(pos, attr);
     }
 
