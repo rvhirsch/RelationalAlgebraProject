@@ -9,21 +9,26 @@ public class Attr {
     private double dubVal;
     private String strVal;
 
+    private String columnName;
+
     private int TYPE;
 
-    public Attr(int value) {
+    public Attr(int value, String colName) {
         this.intVal = value;
         this.TYPE = 0;
+        this.columnName = colName;
     }
 
-    public Attr(double value) {
+    public Attr(double value, String colName) {
         this.dubVal = value;
         this.TYPE = 1;
+        this.columnName = colName;
     }
 
-    public Attr(String value) {
+    public Attr(String value, String colName) {
         this.strVal = value;
         this.TYPE = 2;
+        this.columnName = colName;
     }
 
     public Pair getValue() {
@@ -41,6 +46,10 @@ public class Attr {
 
     public int getType() {
         return this.TYPE;
+    }
+
+    public String getColumnName() {
+        return this.columnName;
     }
 
     public void setVal(int value) {
@@ -63,8 +72,14 @@ public class Attr {
         this.strVal = value;
     }
 
+    public Attr setColumnName(String colName) {
+        this.columnName = colName;
+
+        return this;
+    }
+
     public String toString() {
-        String str = "[";
+        String str = "[Value: ";
 
         switch (this.TYPE) {
             case 0:
@@ -80,29 +95,43 @@ public class Attr {
                 str += " BROKEN ";
                 break;
         }
-        str += ", " + this.TYPE + "]";
+        str += ", ColName: " + this.columnName + ", Type: " + this.TYPE + "]";
 
         return str;
     }
 
     public static void main(String[] args) {
-        Attr a1 = new Attr(5);
-        Attr a2 = new Attr(6.2);
-        Attr a3 = new Attr("thing");
+        Attr a1 = new Attr(5, "Integers");
+        Attr a2 = new Attr(6.2, "Doubles");
+        Attr a3 = new Attr("thing", "String");
 
         System.out.println("INITIAL TEST");
         System.out.println("A1: " + a1.toString());
         System.out.println("A2: " + a2.toString());
         System.out.println("A3: " + a3.toString());
 
+        System.out.println("\nGET COLUMN NAMES");
+        System.out.println("A1: " + a1.getColumnName());
+        System.out.println("A2: " + a2.getColumnName());
+        System.out.println("A3: " + a3.getColumnName());
+
         a1.setVal(18);
         a2.setVal(607.7);
         a3.setVal("other thing");
 
-        System.out.println("\nAFTER RESET");
+        a1.setColumnName("ints");
+        a2.setColumnName("dubs");
+        a3.setColumnName("strs");
+
+        System.out.println("\nAFTER RESETS");
         System.out.println("A1: " + a1.toString());
         System.out.println("A2: " + a2.toString());
         System.out.println("A3: " + a3.toString());
+
+        System.out.println("\nAFTER COLUMN RESET");
+        System.out.println("A1: " + a1.getColumnName());
+        System.out.println("A2: " + a2.getColumnName());
+        System.out.println("A3: " + a3.getColumnName());
 
         System.out.println("\nGET TYPES");
         System.out.println("A1: " + a1.getType());
