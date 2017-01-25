@@ -1,3 +1,5 @@
+import javax.swing.*;
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -136,10 +138,57 @@ public class Rel {
     }
 
     /**
+     *
+     */
+    public void printTable() {
+//        Object[][] obs = new Object[this.relation.size()][this.relation.get(0).getLength()];
+//        for (int i=0; i<obs.length; i++) {
+//            for (int j=0; j<obs[0].length; i++) {
+//                obs[i][j] = this.relation.get(i).getValAtPos(j);
+//            }
+//        }
+
+        Object[][] objs = new Object[this.relation.size()][this.relation.get(0).getLength()];
+        for (int i=0; i<objs.length; i++) {
+            for (int j=0; j<objs[0].length; j++) {
+                objs[i][j] = this.relation.get(i).getValAtPos(j);
+            }
+        }
+
+//        Object[] cols = new Object[this.relation.get(0).getLength()];
+//        for (int i=0; i<cols.length; i++) {
+//            cols[i] = this.relation.get(0).getColNames().get(i);
+//        }
+
+        JTable table = new JTable(objs, this.relation.get(0).getColNames().toArray());
+
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        JPanel jPanel = new JPanel(new GridLayout(2, 0));
+        jPanel.setOpaque(true);
+
+        table.setPreferredScrollableViewportSize(new Dimension(500, 70));
+
+        jPanel.add(new JScrollPane(table));
+
+        frame.add(jPanel);
+        frame.pack();
+        frame.setVisible(true);
+
+//        try {
+//            table.print();
+//        } catch(PrinterException e) {
+//            System.out.println(e.getMessage());
+//        }
+    }
+
+    /**
      * Prints relation
      */
     public String toString() {
         String str = "";
+
         str += Arrays.toString(relation.get(0).getColNames().toArray());    // column headers
         str += "\n";
 
@@ -168,27 +217,36 @@ public class Rel {
 
     public static void main(String[] args) {
         Attr a1 = new Attr(5, "integers");
+        Attr a9 = new Attr(9, "integers");
         Attr a2 = new Attr(6.2, "doubles");
         Attr a3 = new Attr("thing3", "strings");
+        Attr a7 = new Attr("thing7", "strings");
 
         Attr a4 = new Attr(12, "integers");
+        Attr a10 = new Attr(10.5, "doubles");
         Attr a5 = new Attr(17.5, "doubles");
         Attr a6 = new Attr("thing6", "strings");
+        Attr a8 = new Attr("thing8", "strings");
 
         Tup tuple = new Tup();
         tuple.addAttr(a1);
         tuple.addAttr(a2);
         tuple.addAttr(a3);
+        tuple.addAttr(a7);
+        tuple.addAttr(a9);
 
         Tup tuple2 = new Tup();
         tuple2.addAttr(a4);
         tuple2.addAttr(a5);
         tuple2.addAttr(a6);
+        tuple2.addAttr(a8);
+        tuple2.addAttr(a10);
 
         Rel relation = new Rel("Rel1");
         relation.insert(tuple);
         relation.insert(tuple2);
 
         System.out.println(relation.toString());
+        relation.printTable();
     }
 }
