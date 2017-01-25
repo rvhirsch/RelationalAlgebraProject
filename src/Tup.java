@@ -50,7 +50,7 @@ public class Tup {
     }
 
     public String toString() {
-        return this.list.toString();
+        return Arrays.toString(list.toArray());
     }
 
     public static void main(String[] args) {
