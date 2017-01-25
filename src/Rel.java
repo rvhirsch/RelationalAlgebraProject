@@ -16,47 +16,14 @@ public class Rel {
      * Get average per column
      */
     public Rel average(String colName) throws IllegalTypeException {
-        Attr a1;
-        Tup avgTup;
-        Rel avgRel;
+        int size = this.relation.size();
+        Rel avgRel = this.sum(colName);         // sum relation
+        Tup sumTup = avgRel.relation.get(0);    // tuple contained in sum relation
+        Attr sumAttr = sumTup.getAtPos(0);      // attr contained in tuple
 
-        if (this.relation.size() == 0) {    // if empty table
-            a1 = new Attr(0, "Avg");
-            avgTup = new Tup();
-            avgTup.addAttr(a1);
-            avgRel = new Rel("Average");
-            try {
-                avgRel.insert(avgTup);
-            } catch (IllegalInsertException e) {
-                System.out.println(e.getMessage());
-            }
-
-            return avgRel;
-        }
-
-        int index = this.relation.get(0).getColNames().indexOf(colName);
-
-        if (this.relation.get(0).getAtPos(index).getType() >= 2) {
-            throw new IllegalTypeException("IllegalTypeException: Cannot average this type");
-        }
-
-        // else - type is double or int
-        double total = 0;
-        int val;
-        for (int i=0; i<this.relation.size(); i++) {
-            val = (int) this.relation.get(i).getValAtPos(index).getKey();
-            total += (double) val;
-        }
-
-        a1 = new Attr(total / this.relation.size(), "Avg");
-        avgTup = new Tup();
-        avgTup.addAttr(a1);
-        avgRel = new Rel("Average");
-        try {
-            avgRel.insert(avgTup);
-        } catch (IllegalInsertException e) {
-            System.out.println(e.getMessage());
-        }
+        sumTup.setAtPos(0, new Attr((Double) sumAttr.getValue().getKey() / size, "Average"));   // avg = sum / size
+        avgRel.relation.set(0, sumTup);     // update relation
+        avgRel.renameTable("Average(" + colName + ")");
 
         return avgRel;
     }
@@ -64,8 +31,8 @@ public class Rel {
     /**
      * Count rows per column
      */
-    public void count(String colName) {
-
+    public int count() {
+        return this.relation.size();
     }
 
     /**
@@ -317,8 +284,50 @@ public class Rel {
     /**
      * Get sum of group
      */
-    public void sum() {
+    public Rel sum(String colName) throws IllegalTypeException {
+            Attr attr;
+            Tup tup;
+            Rel rel;
 
+            if (this.relation.size() == 0) {    // if empty table
+                attr = new Attr(0, "Sum");
+                tup = new Tup();
+                tup.addAttr(attr);
+                rel = new Rel("Sum (" + colName + ")");
+                try {
+                    rel.insert(tup);
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
+                }
+
+                return rel;
+            }
+
+            int index = this.relation.get(0).getColNames().indexOf(colName);
+
+            if (this.relation.get(0).getAtPos(index).getType() >= 2) {
+                throw new IllegalTypeException("IllegalTypeException: Cannot average this type");
+            }
+
+            // else - type is double or int
+            double total = 0;
+            int val;
+            for (int i=0; i<this.relation.size(); i++) {
+                val = (int) this.relation.get(i).getValAtPos(index).getKey();
+                total += (double) val;
+            }
+
+            attr = new Attr(total, "Sum");
+            tup = new Tup();
+            tup.addAttr(attr);
+            rel = new Rel("Sum(" + colName + ")");
+            try {
+                rel.insert(tup);
+            } catch (IllegalInsertException e) {
+                System.out.println(e.getMessage());
+            }
+
+            return rel;
     }
 
     /**
@@ -533,14 +542,25 @@ public class Rel {
         /*
         testing average
          */
-        relation3.printTable();
-
         try {
             relation3 = relation3.average("integers");
         } catch (IllegalTypeException e) {
-            System.out.println(e. getMessage());
+            System.out.println(e.getMessage());
         }
 
+        relation3.printTable();
         System.out.println(relation3.toString());
+
+        /*
+        testing sum
+         */
+//        try {
+//            relation3 = relation3.sum("integers");
+//        } catch (IllegalTypeException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        relation3.printTable();
+//        System.out.println(relation3.toString());
     }
 }
