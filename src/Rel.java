@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by rvhirsch on 1/18/17.
@@ -134,8 +135,15 @@ public class Rel {
      * Prints relation
      */
     public String toString() {
+        String str = "";
+        str += Arrays.toString(relation.get(0).getColNames().toArray());    // column headers
+        str += "\n";
 
-        return "";
+        for (int i=0; i<relation.size(); i++) {
+            str += relation.get(i).toString();      // db info
+        }
+
+        return str;
     }
 
     /**
