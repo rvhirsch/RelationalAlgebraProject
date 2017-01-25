@@ -31,6 +31,24 @@ public class Attr {
         this.columnName = colName;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof Attr)) return false;
+
+        Attr attr = (Attr) other;
+
+        return this.getValue().equals(attr.getValue()) && this.getType() == attr.getType();
+    }
+
+    public String getColumnName() {
+        return this.columnName;
+    }
+
+    public int getType() {
+        return this.TYPE;
+    }
+
     public Pair getValue() {
         switch (this.TYPE) {
             case 0:
@@ -44,12 +62,10 @@ public class Attr {
         }
     }
 
-    public int getType() {
-        return this.TYPE;
-    }
+    public Attr setColumnName(String colName) {
+        this.columnName = colName;
 
-    public String getColumnName() {
-        return this.columnName;
+        return this;
     }
 
     public void setVal(int value) {
@@ -72,14 +88,9 @@ public class Attr {
         this.strVal = value;
     }
 
-    public Attr setColumnName(String colName) {
-        this.columnName = colName;
-
-        return this;
-    }
-
+    @Override
     public String toString() {
-//        String str = "[Value: ";
+//        String str = "[Value: ";      // leaving this in for testing later maybe
 
         String str = "";
 

@@ -3,9 +3,6 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by rvhirsch on 1/20/17.
- */
 public class Tup {
     ArrayList<Attr> list;
     ArrayList<String> cats;
@@ -20,37 +17,59 @@ public class Tup {
         this.cats.add(attr.getColumnName());
     }
 
-    public int getLength() {
-        return this.list.size();
+    @Override
+    public boolean equals(Object other) {
+        // check basics
+        if (this == other) return true;
+        if (!(other instanceof Tup)) return false;
+
+        Tup tup = (Tup) other;
+
+        if (tup.getLength() != this.getLength()) {
+            return false;
+        }
+
+        for (int i=0; i<this.getLength(); i++) {
+            if (!this.list.get(i).equals(tup.list.get(i))) {  // if this attr != other attr
+                return false;
+            }
+        }
+
+        return true;
     }
 
     public Attr getAtPos(int pos) {
         return this.list.get(pos);
     }
 
-    public Pair getValAtPos(int pos) {
-        return this.list.get(pos).getValue();
+    public ArrayList<String> getColNames() {
+        return this.cats;
+    }
+
+    public int getLength() {
+        return this.list.size();
     }
 
     public int getTypeAtPos(int pos) {
         return this.list.get(pos).getType();
     }
 
+    public Pair getValAtPos(int pos) {
+        return this.list.get(pos).getValue();
+    }
+
     public Attr setAtPos(int pos, Attr attr) {
         return this.list.set(pos, attr);
+    }
+
+    @Override
+    public String toString() {
+        return Arrays.toString(list.toArray());
     }
 
     public void updateCatName(String newName, int col) {
         this.cats.set(col, newName);
         this.list.set(col, this.list.get(col).setColumnName(newName));
-    }
-
-    public ArrayList<String> getColNames() {
-        return this.cats;
-    }
-
-    public String toString() {
-        return Arrays.toString(list.toArray());
     }
 
     public static void main(String[] args) {
