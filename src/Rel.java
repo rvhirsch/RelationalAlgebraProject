@@ -22,8 +22,8 @@ public class Rel {
     /**
      * Insert tuple into table
      */
-    public void insert() {
-
+    public void insert(Tup tup) {
+        relation.add(tup);
     }
 
     /**
@@ -36,7 +36,7 @@ public class Rel {
     /**
      * Cartesian/cross product
      */
-    public void crossPro() {
+    public void crossProd() {
 
     }
 
@@ -99,8 +99,10 @@ public class Rel {
     /**
      * Renames column
      */
-    public void rename() {
-
+    public void rename(String newName, int col) {
+        for (int i=0; i<relation.size(); i++) {
+            relation.get(i).updateCatName(newName, col);
+        }
     }
 
     /**
