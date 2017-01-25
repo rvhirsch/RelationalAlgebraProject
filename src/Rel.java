@@ -243,6 +243,13 @@ public class Rel {
     }
 
     /**
+     * Returns relation name
+     */
+    public void renameTable(String newName) {
+        this.name = newName;
+    }
+
+    /**
      * Right outer natural join
      */
     public void rightNatJoin() {
