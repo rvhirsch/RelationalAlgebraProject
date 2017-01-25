@@ -31,6 +31,14 @@ public class Attr {
         this.columnName = colName;
     }
 
+    public String getColumnName() {
+        return this.columnName;
+    }
+
+    public int getType() {
+        return this.TYPE;
+    }
+
     public Pair getValue() {
         switch (this.TYPE) {
             case 0:
@@ -44,12 +52,10 @@ public class Attr {
         }
     }
 
-    public int getType() {
-        return this.TYPE;
-    }
+    public Attr setColumnName(String colName) {
+        this.columnName = colName;
 
-    public String getColumnName() {
-        return this.columnName;
+        return this;
     }
 
     public void setVal(int value) {
@@ -70,12 +76,6 @@ public class Attr {
 
     public void setVal(String value) {
         this.strVal = value;
-    }
-
-    public Attr setColumnName(String colName) {
-        this.columnName = colName;
-
-        return this;
     }
 
     public String toString() {

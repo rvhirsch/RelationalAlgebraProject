@@ -17,37 +17,37 @@ public class Tup {
         this.cats.add(attr.getColumnName());
     }
 
-    public int getLength() {
-        return this.list.size();
-    }
-
     public Attr getAtPos(int pos) {
         return this.list.get(pos);
-    }
-
-    public Pair getValAtPos(int pos) {
-        return this.list.get(pos).getValue();
-    }
-
-    public int getTypeAtPos(int pos) {
-        return this.list.get(pos).getType();
-    }
-
-    public Attr setAtPos(int pos, Attr attr) {
-        return this.list.set(pos, attr);
-    }
-
-    public void updateCatName(String newName, int col) {
-        this.cats.set(col, newName);
-        this.list.set(col, this.list.get(col).setColumnName(newName));
     }
 
     public ArrayList<String> getColNames() {
         return this.cats;
     }
 
+    public int getLength() {
+        return this.list.size();
+    }
+
+    public int getTypeAtPos(int pos) {
+        return this.list.get(pos).getType();
+    }
+
+    public Pair getValAtPos(int pos) {
+        return this.list.get(pos).getValue();
+    }
+
+    public Attr setAtPos(int pos, Attr attr) {
+        return this.list.set(pos, attr);
+    }
+
     public String toString() {
         return Arrays.toString(list.toArray());
+    }
+
+    public void updateCatName(String newName, int col) {
+        this.cats.set(col, newName);
+        this.list.set(col, this.list.get(col).setColumnName(newName));
     }
 
     public static void main(String[] args) {
