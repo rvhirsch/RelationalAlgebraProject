@@ -79,7 +79,9 @@ public class Attr {
     }
 
     public String toString() {
-        String str = "[Value: ";
+//        String str = "[Value: ";
+
+        String str = "";
 
         switch (this.TYPE) {
             case 0:
@@ -95,7 +97,7 @@ public class Attr {
                 str += " BROKEN ";
                 break;
         }
-        str += ", ColName: " + this.columnName + ", Type: " + this.TYPE + "]";
+//        str += ", ColName: " + this.columnName + ", Type: " + this.TYPE + "]";
 
         return str;
     }
