@@ -13,16 +13,58 @@ public class Rel {
     }
 
     /**
-     * Get average per group
+     * Get average per column
      */
-    public void average() {
+    public Rel average(String colName) throws IllegalTypeException {
+        Attr a1;
+        Tup avgTup;
+        Rel avgRel;
 
+        if (this.relation.size() == 0) {    // if empty table
+            a1 = new Attr(0, "Avg");
+            avgTup = new Tup();
+            avgTup.addAttr(a1);
+            avgRel = new Rel("Average");
+            try {
+                avgRel.insert(avgTup);
+            } catch (IllegalInsertException e) {
+                System.out.println(e.getMessage());
+            }
+
+            return avgRel;
+        }
+
+        int index = this.relation.get(0).getColNames().indexOf(colName);
+
+        if (this.relation.get(0).getAtPos(index).getType() >= 2) {
+            throw new IllegalTypeException("IllegalTypeException: Cannot average this type");
+        }
+
+        // else - type is double or int
+        double total = 0;
+        int val;
+        for (int i=0; i<this.relation.size(); i++) {
+            val = (int) this.relation.get(i).getValAtPos(index).getKey();
+            total += (double) val;
+        }
+
+        a1 = new Attr(total / this.relation.size(), "Avg");
+        avgTup = new Tup();
+        avgTup.addAttr(a1);
+        avgRel = new Rel("Average");
+        try {
+            avgRel.insert(avgTup);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return avgRel;
     }
 
     /**
-     * Count rows per group
+     * Count rows per column
      */
-    public void count() {
+    public void count(String colName) {
 
     }
 
@@ -69,10 +111,12 @@ public class Rel {
     public void insert(Tup tup) throws IllegalInsertException {
         if (this.relation.size() == 0) {    // if first element in table
             relation.add(tup);
+            return;
         }
         else if (!this.relation.get(0).getColNames().equals(tup.getColNames())) {
             throw new IllegalInsertException("IllegalInsertException: Non-matching Column Types");
         }
+        relation.add(tup);
     }
 
     /**
@@ -453,14 +497,14 @@ public class Rel {
         /*
         testing union
          */
-        try {
-            relation = relation.union(relation2);
-        } catch (ColumnNameException e) {
-            System.out.println(e.getMessage());
-        }
-
-        System.out.println(relation.toString());
-        relation.printTable();
+//        try {
+//            relation = relation.union(relation2);
+//        } catch (ColumnNameException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        System.out.println(relation.toString());
+//        relation.printTable();
 
         /*
         testing projection
@@ -485,5 +529,18 @@ public class Rel {
 //        System.out.println();
 //        System.out.println(relation2.toString());
 //        relation2.printTable();
+
+        /*
+        testing average
+         */
+        relation3.printTable();
+
+        try {
+            relation3 = relation3.average("integers");
+        } catch (IllegalTypeException e) {
+            System.out.println(e. getMessage());
+        }
+
+        System.out.println(relation3.toString());
     }
 }
