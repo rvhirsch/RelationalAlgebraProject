@@ -2,11 +2,11 @@
 /**
  * Created by rvhirsch on 1/24/17.
  */
-import com.sun.deploy.util.StringUtils;
-
-import java.io.*;
-import java.lang.reflect.Array;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import java.util.ArrayList;
 
 public class Main {
     private static ArrayList<Rel> tables =  new ArrayList<Rel>();
@@ -58,11 +58,11 @@ public class Main {
 
                 //Get the name of the table, 1 word on 1 line
                 //get the name of the categories,
-                    //load the line containing categories
-                    //parse the line into an array, elements seperated by a space
-                    //load the next line containing attributes and parse it by space
-                    //the nth attribute has a col name of the nth element from the earlier array
-                    //end this loop when we hit a "*"
+                //load the line containing categories
+                //parse the line into an array, elements seperated by a space
+                //load the next line containing attributes and parse it by space
+                //the nth attribute has a col name of the nth element from the earlier array
+                //end this loop when we hit a "*"
 
                 String entries[] = curLine.split(" ");
 
@@ -70,8 +70,11 @@ public class Main {
                     Attr attr = new Attr(entries[y], categories[y]);
                     tup.addAttr(attr);
                 }
-
-                newRel.insert(tup);
+                try {
+                    newRel.insert(tup);
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
+                }
             }
             tables.add(newRel);
         }
