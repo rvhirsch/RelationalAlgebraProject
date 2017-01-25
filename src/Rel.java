@@ -172,7 +172,8 @@ public class Rel {
     }
 
     /**
-     *
+     * Prints table in new window
+     * Code mostly taken from: http://www.java2s.com/Tutorial/Java/0240__Swing/PrintaJTableout.htm
      */
     public void printTable() {
         Object[][] objs = new Object[this.relation.size()][this.relation.get(0).getLength()];
