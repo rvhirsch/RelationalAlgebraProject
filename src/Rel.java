@@ -57,6 +57,13 @@ public class Rel {
     }
 
     /**
+     * Returns relation name
+     */
+    public String getName() {
+        return this.name;
+    }
+
+    /**
      * Insert tuple into table
      */
     public void insert(Tup tup) throws IllegalInsertException {
@@ -439,11 +446,14 @@ public class Rel {
         /*
         testing union
          */
-//        try {
-//            relation = relation.union(relation2);
-//        } catch (ColumnNameException e) {
-//            System.out.println(e.getMessage());
-//        }
+        try {
+            relation = relation.union(relation2);
+        } catch (ColumnNameException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println(relation.toString());
+        relation.printTable();
 
         /*
         testing projection
@@ -460,13 +470,13 @@ public class Rel {
         /*
         testing intersection
          */
-        try {
-            relation2 = relation2.intersection(relation3);
-        } catch (IllegalInsertException e) {
-            System.out.println(e.getMessage());
-        }
-        System.out.println();
-        System.out.println(relation2.toString());
-        relation2.printTable();
+//        try {
+//            relation2 = relation2.intersection(relation3);
+//        } catch (IllegalInsertException e) {
+//            System.out.println(e.getMessage());
+//        }
+//        System.out.println();
+//        System.out.println(relation2.toString());
+//        relation2.printTable();
     }
 }
