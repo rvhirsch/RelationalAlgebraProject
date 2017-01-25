@@ -31,6 +31,16 @@ public class Attr {
         this.columnName = colName;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        if (!(other instanceof Attr)) return false;
+
+        Attr attr = (Attr) other;
+
+        return this.getValue().equals(attr.getValue()) && this.getType() == attr.getType();
+    }
+
     public String getColumnName() {
         return this.columnName;
     }
@@ -78,8 +88,9 @@ public class Attr {
         this.strVal = value;
     }
 
+    @Override
     public String toString() {
-//        String str = "[Value: ";
+//        String str = "[Value: ";      // leaving this in for testing later maybe
 
         String str = "";
 

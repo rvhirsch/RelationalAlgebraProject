@@ -17,6 +17,27 @@ public class Tup {
         this.cats.add(attr.getColumnName());
     }
 
+    @Override
+    public boolean equals(Object other) {
+        // check basics
+        if (this == other) return true;
+        if (!(other instanceof Tup)) return false;
+
+        Tup tup = (Tup) other;
+
+        if (tup.getLength() != this.getLength()) {
+            return false;
+        }
+
+        for (int i=0; i<this.getLength(); i++) {
+            if (!this.list.get(i).equals(tup.list.get(i))) {  // if this attr != other attr
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     public Attr getAtPos(int pos) {
         return this.list.get(pos);
     }
@@ -41,6 +62,7 @@ public class Tup {
         return this.list.set(pos, attr);
     }
 
+    @Override
     public String toString() {
         return Arrays.toString(list.toArray());
     }

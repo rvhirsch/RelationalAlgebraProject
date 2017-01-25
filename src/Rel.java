@@ -20,18 +20,6 @@ public class Rel {
     }
 
     /**
-     * Insert tuple into table
-     */
-    public void insert(Tup tup) throws IllegalInsertException {
-        if (this.relation.size() == 0) {    // if first element in table
-            relation.add(tup);
-        }
-        else if (!this.relation.get(0).getColNames().equals(tup.getColNames())) {
-            throw new IllegalInsertException("ERROR: Non-matching Column Types");
-        }
-    }
-
-    /**
      * Count rows per group
      */
     public void count() {
@@ -45,6 +33,22 @@ public class Rel {
 
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (other == this) return true;
+        if (!(other instanceof Rel)) return false;
+
+        Rel rel = (Rel) other;
+
+        for (int i=0; i<rel.relation.size(); i++) {
+            if (!rel.relation.get(i).equals(((Rel) other).relation.get(i))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     /**
      * Full outer natural join
      */
@@ -53,10 +57,65 @@ public class Rel {
     }
 
     /**
+     * Insert tuple into table
+     */
+    public void insert(Tup tup) throws IllegalInsertException {
+        if (this.relation.size() == 0) {    // if first element in table
+            relation.add(tup);
+        }
+        else if (!this.relation.get(0).getColNames().equals(tup.getColNames())) {
+            throw new IllegalInsertException("ERROR: Non-matching Column Types");
+        }
+    }
+
+    /**
      * Returns common columns from 2 sets
      */
-    public void intersection() {
+    public Rel intersection(Rel other) throws IllegalInsertException {
+        ArrayList<String> thisList = this.relation.get(0).getColNames();
+        ArrayList<String> otherList = other.relation.get(0).getColNames();
 
+        ArrayList<String> colNames = new ArrayList<String>();
+
+        for (int i=0; i<thisList.size(); i++) {
+            if (otherList.contains(thisList.get(i))) {
+                colNames.add(thisList.get(i));
+            }
+        }
+
+        Rel rel = new Rel("Intersection Relation");
+        if (colNames.size() == 0) {  // if no intersection
+            return rel;
+        }
+
+        // else - intersection exists
+
+        Rel thisRel = this.proj(colNames);
+        Rel otherRel = this.proj(colNames);
+
+        System.out.println("\nTHIS REL:");
+        System.out.println(thisRel.toString());
+
+        System.out.println("OTHER REL:");
+        System.out.println(otherRel.toString());
+
+        System.out.println(thisRel.relation.get(0).equals(otherRel.relation.get(0)));
+
+        Tup t;
+        int index;
+        for (int i=0; i<otherRel.relation.size(); i++) {
+            t = otherRel.relation.get(i);
+            index = thisRel.relation.indexOf(t);
+            if (index > -1) {
+                try {
+                    rel.insert(t);
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+        }
+
+        return rel;
     }
 
     /**
@@ -69,14 +128,14 @@ public class Rel {
     /**
      * Get maximum per group
      */
-    public void max() {
+    public void max(String colName) {
 
     }
 
     /**
      * Get minimum per group
      */
-    public void min() {
+    public void min(String colName) {
 
     }
 
@@ -85,6 +144,45 @@ public class Rel {
      */
     public void natJoin() {
 
+    }
+
+    /**
+     * Prints table in new window
+     * Code mostly taken from: http://www.java2s.com/Tutorial/Java/0240__Swing/PrintaJTableout.htm
+     */
+    public void printTable() {
+        if (this.relation.size() == 0) {    // if empty relation
+            return;
+        }
+
+        Object[][] objs = new Object[this.relation.size()][this.relation.get(0).getLength()];
+        for (int i=0; i<objs.length; i++) {
+            for (int j=0; j<objs[0].length; j++) {
+                objs[i][j] = this.relation.get(i).getValAtPos(j);
+            }
+        }
+
+        JTable table = new JTable(objs, this.relation.get(0).getColNames().toArray());
+
+        JFrame frame = new JFrame();
+        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+
+        JPanel jPanel = new JPanel(new GridLayout(2, 0));
+        jPanel.setOpaque(true);
+
+        table.setPreferredScrollableViewportSize(new Dimension(1000, 200));
+
+        jPanel.add(new JScrollPane(table));
+
+        frame.add(jPanel);
+        frame.pack();
+        frame.setVisible(true);
+
+//        try {
+//            table.print();
+//        } catch(PrinterException e) {
+//            System.out.println(e.getMessage());
+//        }
     }
 
     /**
@@ -166,44 +264,13 @@ public class Rel {
     }
 
     /**
-     * Prints table in new window
-     * Code mostly taken from: http://www.java2s.com/Tutorial/Java/0240__Swing/PrintaJTableout.htm
-     */
-    public void printTable() {
-        Object[][] objs = new Object[this.relation.size()][this.relation.get(0).getLength()];
-        for (int i=0; i<objs.length; i++) {
-            for (int j=0; j<objs[0].length; j++) {
-                objs[i][j] = this.relation.get(i).getValAtPos(j);
-            }
-        }
-
-        JTable table = new JTable(objs, this.relation.get(0).getColNames().toArray());
-
-        JFrame frame = new JFrame();
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-
-        JPanel jPanel = new JPanel(new GridLayout(2, 0));
-        jPanel.setOpaque(true);
-
-        table.setPreferredScrollableViewportSize(new Dimension(1000, 200));
-
-        jPanel.add(new JScrollPane(table));
-
-        frame.add(jPanel);
-        frame.pack();
-        frame.setVisible(true);
-
-//        try {
-//            table.print();
-//        } catch(PrinterException e) {
-//            System.out.println(e.getMessage());
-//        }
-    }
-
-    /**
      * Prints relation
      */
     public String toString() {
+        if (this.relation.size() == 0) {
+            return "[]";
+        }
+
         String str = "";
 
         str += Arrays.toString(this.relation.get(0).getColNames().toArray());    // column headers
@@ -259,6 +326,9 @@ public class Rel {
     }
 
     public static void main(String[] args) {
+        /*
+        SET UP RELATION 1
+         */
         Attr a1 = new Attr(5, "integers");
         Attr a2 = new Attr(6.2, "doubles");
         Attr a3 = new Attr("thing3", "strings");
@@ -289,6 +359,9 @@ public class Rel {
             System.out.println(e.getMessage());
         }
 
+        /*
+        SET UP RELATION 2 - same column headers as Rel1
+         */
         Attr a9 = new Attr(19, "integers");
         Attr a10 = new Attr(60.25, "doubles");
         Attr a11 = new Attr("yet another", "strings");
@@ -300,8 +373,8 @@ public class Rel {
         tuple3.addAttr(a11);
         tuple3.addAttr(a12);
 
-        Attr a13 = new Attr(128, "integers");
-        Attr a14 = new Attr(175.29, "doubles");
+        Attr a13 = new Attr(19, "integers");
+        Attr a14 = new Attr(60.25, "doubles");
         Attr a15 = new Attr("ugh stuff", "strings");
         Attr a16 = new Attr(81, "other ints");
 
@@ -319,30 +392,81 @@ public class Rel {
             System.out.println(e.getMessage());
         }
 
+         /*
+        SET UP RELATION 3 - some column headers same as Rel1
+         */
+        Attr a17 = new Attr(19, "integers");
+        Attr a18 = new Attr(60.25, "doubles");
+        Attr a19 = new Attr(71, "yikes");
+        Attr a20 = new Attr("lol test", "such test");
+
+        Tup tuple5 = new Tup();
+        tuple5.addAttr(a17);
+        tuple5.addAttr(a18);
+        tuple5.addAttr(a19);
+        tuple5.addAttr(a20);
+
+        Attr a21 = new Attr(128, "integers");
+        Attr a22 = new Attr(175.29, "doubles");
+        Attr a23 = new Attr(7777, "yikes");
+        Attr a24 = new Attr("mrgh", "such test");
+
+        Tup tuple6 = new Tup();
+        tuple6.addAttr(a21);
+        tuple6.addAttr(a22);
+        tuple6.addAttr(a23);
+        tuple6.addAttr(a24);
+
+        Rel relation3 = new Rel("Rel2");
+        try {
+            relation3.insert(tuple5);
+            relation3.insert(tuple6);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
+
         System.out.println("RELATION 1:");
         System.out.println(relation.toString());
 
         System.out.println("RELATION 2:");
         System.out.println(relation2.toString());
 
+        System.out.println("RELATION 3:");
+        System.out.println(relation3.toString());
+
 //        relation.printTable();
 
-        ArrayList<String> projOn = new ArrayList<String>();
-        projOn.add("integers");
-        projOn.add("strings");
-        projOn.add("doubles");
-        relation = relation.proj(projOn);
+        /*
+        testing union
+         */
+//        try {
+//            relation = relation.union(relation2);
+//        } catch (ColumnNameException e) {
+//            System.out.println(e.getMessage());
+//        }
 
-        // testing union
+        /*
+        testing projection
+         */
+//        ArrayList<String> projOn = new ArrayList<String>();
+//        projOn.add("integers");
+//        projOn.add("strings");
+//        projOn.add("doubles");
+//        relation = relation.proj(projOn);
+
+//        System.out.println(relation.toString());
+//        relation.printTable();
+
+        /*
+        testing intersection
+         */
         try {
-            relation = relation.union(relation2);
-        } catch (ColumnNameException e) {
+            relation2 = relation2.intersection(relation3);
+        } catch (IllegalInsertException e) {
             System.out.println(e.getMessage());
         }
-
-        // testing projection
-        System.out.println(relation.toString());
-        relation.printTable();
-
+        System.out.println();
+        System.out.println(relation2.toString());
+        relation2.printTable();
     }
 }
