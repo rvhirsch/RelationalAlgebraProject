@@ -162,10 +162,10 @@ public class Rel {
             return;
         }
 
-        Object[][] objs = new Object[this.relation.size()][this.relation.get(0).getLength()];
+        String[][] objs = new String[this.relation.size()][this.relation.get(0).getLength()];
         for (int i=0; i<objs.length; i++) {
             for (int j=0; j<objs[0].length; j++) {
-                objs[i][j] = this.relation.get(i).getValAtPos(j);
+                objs[i][j] = this.relation.get(i).getValAtPos(j).getKey().toString();
             }
         }
 
