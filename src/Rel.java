@@ -22,8 +22,13 @@ public class Rel {
     /**
      * Insert tuple into table
      */
-    public void insert(Tup tup) {
-        relation.add(tup);
+    public void insert(Tup tup) throws IllegalInsertException {
+        if (this.relation.size() == 0) {    // if first element in table
+            relation.add(tup);
+        }
+        else if (!this.relation.get(0).getColNames().equals(tup.getColNames())) {
+            throw new IllegalInsertException("ERROR: Non-matching Column Types");
+        }
     }
 
     /**
@@ -94,36 +99,25 @@ public class Rel {
             }
         }
 
-        Rel newRel = new Rel("Relation Projection");
+        Rel newRel = new Rel("Projection Relation");
         Tup newTup = new Tup();
 
         for (int i=0; i<this.relation.size(); i++) {
             for (int j=0; j<cols.size(); j++) {
                 newTup.addAttr(this.relation.get(i).getAtPos(j));
             }
-            newRel.insert(newTup);
+            try {
+                newRel.insert(newTup);
+            } catch (IllegalInsertException e) {
+                System.out.println(e.getMessage());
+            }
             newTup = new Tup();     // clear tuple values
         }
 
-//        Rel newRel = new Rel("new relation");
-//        Tup newTup = new Tup();
-//
-//        String col;
-//        for (int i=0; i<this.relation.size(); i++) {
-//            col = this.relation.get(0).getColNames().get(i);
-//            for (int j=0; j<this.relation.get(0).getLength(); j++) {
-//                if (colNames.contains(col)) {
-//                    newTup.addAttr(this.relation.get(i).getAtPos(j));
-//                }
-//            }
-//            newTup = new Tup();
-//            if (newTup.getLength() > 0) {
-//                newRel.insert(newTup);
-//            }
-//        }
-//
-////        System.out.println(newRel.toString());
-//
+        for (int i=0; i<this.relation.size(); i++) {
+            this.relation.get(i).cats = colNames;
+        }
+
         return newRel;
     }
 
@@ -227,8 +221,34 @@ public class Rel {
      * Puts 2 tables together vertically
      * Must have same col names
      */
-    public void union() {
+    public Rel union(Rel other) throws ColumnNameException {
+        // check if relations have same column names
+        if (this.relation.get(0).getColNames().equals(other.relation.get(0).getColNames())) {
+            Rel newRel = new Rel("Union Relation");
 
+            for (int i=0; i<this.relation.size(); i++) {
+               try {
+                    newRel.insert(this.relation.get(i));
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            for (int i=0; i<other.relation.size(); i++) {
+                try {
+                    newRel.insert(other.relation.get(i));
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
+                }
+            }
+
+            return newRel;
+        }
+        else {
+            throw new ColumnNameException("ERROR: These relations have different column names");
+
+//            return null;
+        }
     }
 
     /**
@@ -244,16 +264,16 @@ public class Rel {
         Attr a3 = new Attr("thing3", "strings");
         Attr a7 = new Attr(5, "other ints");
 
-        Attr a4 = new Attr(12, "integers");
-        Attr a5 = new Attr(17.5, "doubles");
-        Attr a6 = new Attr("thing6", "strings");
-        Attr a8 = new Attr(18, "other ints");
-
         Tup tuple = new Tup();
         tuple.addAttr(a1);
         tuple.addAttr(a2);
         tuple.addAttr(a3);
         tuple.addAttr(a7);
+
+        Attr a4 = new Attr(12, "integers");
+        Attr a5 = new Attr(17.5, "doubles");
+        Attr a6 = new Attr("thing6", "strings");
+        Attr a8 = new Attr(18, "other ints");
 
         Tup tuple2 = new Tup();
         tuple2.addAttr(a4);
@@ -262,10 +282,49 @@ public class Rel {
         tuple2.addAttr(a8);
 
         Rel relation = new Rel("Rel1");
-        relation.insert(tuple);
-        relation.insert(tuple2);
+        try {
+            relation.insert(tuple);
+            relation.insert(tuple2);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
 
+        Attr a9 = new Attr(19, "integers");
+        Attr a10 = new Attr(60.25, "doubles");
+        Attr a11 = new Attr("yet another", "strings");
+        Attr a12 = new Attr(57, "other ints");
+
+        Tup tuple3 = new Tup();
+        tuple3.addAttr(a9);
+        tuple3.addAttr(a10);
+        tuple3.addAttr(a11);
+        tuple3.addAttr(a12);
+
+        Attr a13 = new Attr(128, "integers");
+        Attr a14 = new Attr(175.29, "doubles");
+        Attr a15 = new Attr("ugh stuff", "strings");
+        Attr a16 = new Attr(81, "other ints");
+
+        Tup tuple4 = new Tup();
+        tuple4.addAttr(a13);
+        tuple4.addAttr(a14);
+        tuple4.addAttr(a15);
+        tuple4.addAttr(a16);
+
+        Rel relation2 = new Rel("Rel2");
+        try {
+            relation2.insert(tuple3);
+            relation2.insert(tuple4);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
+
+        System.out.println("RELATION 1:");
         System.out.println(relation.toString());
+
+        System.out.println("RELATION 2:");
+        System.out.println(relation2.toString());
+
 //        relation.printTable();
 
         ArrayList<String> projOn = new ArrayList<String>();
@@ -274,7 +333,15 @@ public class Rel {
         projOn.add("doubles");
         relation = relation.proj(projOn);
 
-//        System.out.println(relation.toString());
+        // testing union
+        try {
+            relation = relation.union(relation2);
+        } catch (ColumnNameException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // testing projection
+        System.out.println(relation.toString());
         relation.printTable();
 
     }
