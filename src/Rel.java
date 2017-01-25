@@ -3,10 +3,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by rvhirsch on 1/18/17.
- */
-
 public class Rel {
     ArrayList<Tup> relation;
     String name;
@@ -89,8 +85,46 @@ public class Rel {
     /**
      * Selects certain columns
      */
-    public void proj() {
+    public Rel proj(ArrayList<String> colNames) {
+        ArrayList<Integer> cols = new ArrayList<Integer>();
 
+        for (int i=0; i<this.relation.get(0).getColNames().size(); i++) {
+            if (colNames.contains(this.relation.get(0).getColNames().get(i))) {
+                cols.add(i);
+            }
+        }
+
+        Rel newRel = new Rel("Relation Projection");
+        Tup newTup = new Tup();
+
+        for (int i=0; i<this.relation.size(); i++) {
+            for (int j=0; j<cols.size(); j++) {
+                newTup.addAttr(this.relation.get(i).getAtPos(j));
+            }
+            newRel.insert(newTup);
+            newTup = new Tup();     // clear tuple values
+        }
+
+//        Rel newRel = new Rel("new relation");
+//        Tup newTup = new Tup();
+//
+//        String col;
+//        for (int i=0; i<this.relation.size(); i++) {
+//            col = this.relation.get(0).getColNames().get(i);
+//            for (int j=0; j<this.relation.get(0).getLength(); j++) {
+//                if (colNames.contains(col)) {
+//                    newTup.addAttr(this.relation.get(i).getAtPos(j));
+//                }
+//            }
+//            newTup = new Tup();
+//            if (newTup.getLength() > 0) {
+//                newRel.insert(newTup);
+//            }
+//        }
+//
+////        System.out.println(newRel.toString());
+//
+        return newRel;
     }
 
     /**
@@ -104,8 +138,8 @@ public class Rel {
      * Renames column
      */
     public void rename(String newName, int col) {
-        for (int i=0; i<relation.size(); i++) {
-            relation.get(i).updateCatName(newName, col);
+        for (int i=0; i<this.relation.size(); i++) {
+            this.relation.get(i).updateCatName(newName, col);
         }
     }
 
@@ -177,11 +211,11 @@ public class Rel {
     public String toString() {
         String str = "";
 
-        str += Arrays.toString(relation.get(0).getColNames().toArray());    // column headers
+        str += Arrays.toString(this.relation.get(0).getColNames().toArray());    // column headers
         str += "\n";
 
-        for (int i=0; i<relation.size(); i++) {
-            str += relation.get(i).toString();      // db info
+        for (int i=0; i<this.relation.size(); i++) {
+            str += this.relation.get(i).toString();      // db info
             str += "\n";
         }
 
@@ -231,6 +265,16 @@ public class Rel {
         relation.insert(tuple2);
 
         System.out.println(relation.toString());
+//        relation.printTable();
+
+        ArrayList<String> projOn = new ArrayList<String>();
+        projOn.add("integers");
+        projOn.add("strings");
+        projOn.add("doubles");
+        relation = relation.proj(projOn);
+
+//        System.out.println(relation.toString());
         relation.printTable();
+
     }
 }

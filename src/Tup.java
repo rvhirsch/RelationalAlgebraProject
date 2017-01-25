@@ -3,9 +3,6 @@ import javafx.util.Pair;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-/**
- * Created by rvhirsch on 1/20/17.
- */
 public class Tup {
     ArrayList<Attr> list;
     ArrayList<String> cats;
