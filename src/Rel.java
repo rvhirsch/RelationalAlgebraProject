@@ -131,6 +131,14 @@ public class Rel {
     }
 
     /**
+     * Prints relation
+     */
+    public String toString() {
+
+        return "";
+    }
+
+    /**
      * Puts 2 tables together vertically
      * Must have same col names
      */
