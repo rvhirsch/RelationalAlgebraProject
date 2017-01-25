@@ -7,9 +7,11 @@ import java.util.Arrays;
 
 public class Rel {
     ArrayList<Tup> relation;
+    String name;
 
-    public Rel() {
-        relation = new ArrayList<Tup>();
+    public Rel(String relName) {
+        this.relation = new ArrayList<Tup>();
+        this.name = relName;
     }
 
     /**
@@ -143,6 +145,7 @@ public class Rel {
 
         for (int i=0; i<relation.size(); i++) {
             str += relation.get(i).toString();      // db info
+            str += "\n";
         }
 
         return str;
@@ -164,6 +167,28 @@ public class Rel {
     }
 
     public static void main(String[] args) {
+        Attr a1 = new Attr(5, "integers");
+        Attr a2 = new Attr(6.2, "doubles");
+        Attr a3 = new Attr("thing3", "strings");
 
+        Attr a4 = new Attr(12, "integers");
+        Attr a5 = new Attr(17.5, "doubles");
+        Attr a6 = new Attr("thing6", "strings");
+
+        Tup tuple = new Tup();
+        tuple.addAttr(a1);
+        tuple.addAttr(a2);
+        tuple.addAttr(a3);
+
+        Tup tuple2 = new Tup();
+        tuple2.addAttr(a4);
+        tuple2.addAttr(a5);
+        tuple2.addAttr(a6);
+
+        Rel relation = new Rel("Rel1");
+        relation.insert(tuple);
+        relation.insert(tuple2);
+
+        System.out.println(relation.toString());
     }
 }
