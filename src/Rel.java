@@ -71,7 +71,7 @@ public class Rel {
             relation.add(tup);
         }
         else if (!this.relation.get(0).getColNames().equals(tup.getColNames())) {
-            throw new IllegalInsertException("ERROR: Non-matching Column Types");
+            throw new IllegalInsertException("IllegalInsertException: Non-matching Column Types");
         }
     }
 
@@ -326,7 +326,7 @@ public class Rel {
             return newRel;
         }
         else {
-            throw new ColumnNameException("ERROR: These relations have different column names");
+            throw new ColumnNameException("ColumnNameException: These relations have different column names");
 
 //            return null;
         }
