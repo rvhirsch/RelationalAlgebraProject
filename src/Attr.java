@@ -11,6 +11,11 @@ public class Attr {
 
     private String columnName;
 
+    /*
+      * type 0 = int
+      * type 1 = double
+      * type 2 = string
+     */
     private int TYPE;
 
     public Attr(int value, String colName) {
