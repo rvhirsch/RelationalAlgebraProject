@@ -16,16 +16,46 @@ public class Rel {
      * Get average per column
      */
     public Rel average(String colName) throws IllegalTypeException {
-        int size = this.relation.size();
-        Rel avgRel = this.sum(colName);         // sum relation
-        Tup sumTup = avgRel.relation.get(0);    // tuple contained in sum relation
-        Attr sumAttr = sumTup.getAtPos(0);      // attr contained in tuple
+        if (this.relation.size() == 0) {
+            return new Rel("Avg(" + colName + ")");
+        }
 
-        sumTup.setAtPos(0, new Attr((Double) sumAttr.getValue().getKey() / size, "Average"));   // avg = sum / size
-        avgRel.relation.set(0, sumTup);     // update relation
-        avgRel.renameTable("Average(" + colName + ")");
+        int index = this.relation.get(0).getColNames().indexOf(colName);
+        Rel avgRel;
+        Tup sumTup;
+        Attr sumAttr;
 
-        return avgRel;
+        int type = this.relation.get(0).getAtPos(index).getType();
+
+        if (type >= 2) {
+            throw new IllegalTypeException("IllegalTypeException: Cannot compute average of this type");
+        }
+        else {
+            avgRel = this.sum(colName);         // sum relation
+            sumTup = avgRel.relation.get(0);    // tuple contained in sum relation
+            sumAttr = sumTup.getAtPos(0);      // attr contained in tuple
+            int sumInt;
+            double sumDub;
+            double avg;
+
+            if (type == 0) {
+                sumInt = (int) sumAttr.getValue().getKey();
+                avg = (double) sumInt / this.relation.size();
+
+                sumTup.setAtPos(0, new Attr(avg, "Average"));
+                avgRel.relation.set(0, sumTup);     // update relation
+                avgRel.renameTable("Avg(" + colName + ")");
+            } else if (type == 1) {
+                sumDub = (double) sumAttr.getValue().getKey();
+                avg = sumDub / this.relation.size();
+
+                sumTup.setAtPos(0, new Attr(avg, "Average"));   // avg = sum / size
+                avgRel.relation.set(0, sumTup);     // update relation
+                avgRel.renameTable("Avg(" + colName + ")");
+            }
+
+            return avgRel;
+        }
     }
 
     /**
@@ -146,7 +176,42 @@ public class Rel {
     /**
      * Get maximum per group
      */
-    public void max(String colName) {
+    public Rel max(String colName) throws IllegalTypeException {
+        Attr maxAttr;
+        Tup maxTup;
+        Rel maxRel;
+
+        if (this.relation.size() == 0) {    // if empty table
+            return new Rel("Max(" + colName + ")");
+        }
+
+        int index = this.relation.get(0).getColNames().indexOf(colName);
+
+        if (this.relation.get(0).getAtPos(index).getType() >= 2) {
+            throw new IllegalTypeException("IllegalTypeException: Cannot find max of this type");
+        }
+
+        // else - type is double or int
+        double max = Double.MIN_VALUE;
+        double val;
+        for (int i=0; i<this.relation.size(); i++) {
+            val = (double) this.relation.get(i).getValAtPos(index).getKey();
+            if (val > max) {
+                max = val;
+            }
+        }
+
+        maxAttr = new Attr(max, "Max");
+        maxTup = new Tup();
+        maxTup.addAttr(maxAttr);
+        maxRel = new Rel("Max(" + colName + ")");
+        try {
+            maxRel.insert(maxTup);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return maxRel;
 
     }
 
@@ -285,39 +350,40 @@ public class Rel {
      * Get sum of group
      */
     public Rel sum(String colName) throws IllegalTypeException {
-            Attr attr;
+            Attr attr = new Attr(0, "Sum(" + colName + ")");
             Tup tup;
             Rel rel;
 
             if (this.relation.size() == 0) {    // if empty table
-                attr = new Attr(0, "Sum");
-                tup = new Tup();
-                tup.addAttr(attr);
-                rel = new Rel("Sum (" + colName + ")");
-                try {
-                    rel.insert(tup);
-                } catch (IllegalInsertException e) {
-                    System.out.println(e.getMessage());
-                }
-
-                return rel;
+                return new Rel("Sum(" + colName + ")");
             }
 
             int index = this.relation.get(0).getColNames().indexOf(colName);
 
-            if (this.relation.get(0).getAtPos(index).getType() >= 2) {
-                throw new IllegalTypeException("IllegalTypeException: Cannot average this type");
+            int type = this.relation.get(0).getAtPos(index).getType();
+            int totalInt;
+            double total;
+
+            if (type >= 2) {
+                throw new IllegalTypeException("IllegalTypeException: Cannot compute sum of this type");
             }
 
             // else - type is double or int
-            double total = 0;
-            int val;
-            for (int i=0; i<this.relation.size(); i++) {
-                val = (int) this.relation.get(i).getValAtPos(index).getKey();
-                total += (double) val;
+            else if (type == 0) {
+                totalInt = 0;
+                for (int i=0; i<this.relation.size(); i++) {
+                    totalInt += (Integer) this.relation.get(i).getValAtPos(index).getKey();
+                }
+                attr = new Attr(totalInt, "Sum(" + colName + ")");
+            }
+            else if (type == 1) {
+                total = 0.0;
+                for (int i=0; i<this.relation.size(); i++) {
+                    total += (Double) this.relation.get(i).getValAtPos(index).getKey();
+                }
+                attr = new Attr(total, "Sum(" + colName + ")");
             }
 
-            attr = new Attr(total, "Sum");
             tup = new Tup();
             tup.addAttr(attr);
             rel = new Rel("Sum(" + colName + ")");
@@ -543,24 +609,24 @@ public class Rel {
         testing average
          */
         try {
-            relation3 = relation3.average("integers");
+            relation = relation.average("doubles");
         } catch (IllegalTypeException e) {
             System.out.println(e.getMessage());
         }
 
-        relation3.printTable();
-        System.out.println(relation3.toString());
+        relation.printTable();
+        System.out.println(relation.toString());
 
         /*
         testing sum
          */
 //        try {
-//            relation3 = relation3.sum("integers");
+//            relation = relation.sum("doubles");
 //        } catch (IllegalTypeException e) {
 //            System.out.println(e.getMessage());
 //        }
 //
-//        relation3.printTable();
-//        System.out.println(relation3.toString());
+//        relation.printTable();
+//        System.out.println(relation.toString());
     }
 }
