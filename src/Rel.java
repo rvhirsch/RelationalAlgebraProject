@@ -68,8 +68,30 @@ public class Rel {
     /**
      * Cartesian/cross product
      */
-    public void crossProd() {
+    public Rel crossProd(Rel rel) {
+        Rel crossRel = new Rel("CrossProduct");
+        Tup tup = new Tup();
 
+        for (int i=0; i<this.relation.size(); i++) {
+            tup = this.relation.get(i);
+
+            for (int j=0; j<rel.relation.size(); j++) {
+                for (int k=0; k<rel.relation.get(j).getLength(); k++) {
+                    tup.list.add(rel.relation.get(j).getAtPos(k));
+                    tup.cats.add(rel.relation.get(j).getColNames().get(k));
+
+                    System.out.println(tup.toString());
+                }
+            }
+
+            try {
+                crossRel.insert(tup);
+            } catch (IllegalInsertException e) {
+                System.out.println(e.getMessage());
+            }
+        }
+
+        return crossRel;
     }
 
     @Override
@@ -218,7 +240,42 @@ public class Rel {
     /**
      * Get minimum per group
      */
-    public void min(String colName) {
+    public Rel min(String colName) throws IllegalTypeException {
+        Attr minAttr;
+        Tup minTup;
+        Rel minRel;
+
+        if (this.relation.size() == 0) {    // if empty table
+            return new Rel("Min(" + colName + ")");
+        }
+
+        int index = this.relation.get(0).getColNames().indexOf(colName);
+
+        if (this.relation.get(0).getAtPos(index).getType() >= 2) {
+            throw new IllegalTypeException("IllegalTypeException: Cannot find max of this type");
+        }
+
+        // else - type is double or int
+        double min = Double.MAX_VALUE;
+        double val;
+        for (int i=0; i<this.relation.size(); i++) {
+            val = (double) this.relation.get(i).getValAtPos(index).getKey();
+            if (val < min) {
+                min = val;
+            }
+        }
+
+        minAttr = new Attr(min, "Min");
+        minTup = new Tup();
+        minTup.addAttr(minAttr);
+        minRel = new Rel("Min(" + colName + ")");
+        try {
+            minRel.insert(minTup);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
+
+        return minRel;
 
     }
 
@@ -608,14 +665,14 @@ public class Rel {
         /*
         testing average
          */
-        try {
-            relation = relation.average("doubles");
-        } catch (IllegalTypeException e) {
-            System.out.println(e.getMessage());
-        }
-
-        relation.printTable();
-        System.out.println(relation.toString());
+//        try {
+//            relation = relation.average("doubles");
+//        } catch (IllegalTypeException e) {
+//            System.out.println(e.getMessage());
+//        }
+//
+//        relation.printTable();
+//        System.out.println(relation.toString());
 
         /*
         testing sum
@@ -628,5 +685,13 @@ public class Rel {
 //
 //        relation.printTable();
 //        System.out.println(relation.toString());
+
+        /*
+        testing cross product
+         */
+
+        relation = relation.crossProd(relation3);
+        relation.printTable();
+        System.out.println(relation.toString());
     }
 }
