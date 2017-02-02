@@ -124,7 +124,7 @@ public class Rel {
      * Full outer natural join
      */
     public void fullNatJoin() {
-
+        // TODO
     }
 
     /**
@@ -202,7 +202,7 @@ public class Rel {
      * Left outer natural join
      */
     public void leftNatJoin() {
-
+        // TODO
     }
 
     /**
@@ -244,7 +244,6 @@ public class Rel {
         }
 
         return maxRel;
-
     }
 
     /**
@@ -293,7 +292,7 @@ public class Rel {
      * Natural join
      */
     public void natJoin() {
-
+        // TODO
     }
 
     /**
@@ -308,7 +307,12 @@ public class Rel {
         String[][] objs = new String[this.relation.size()][this.relation.get(0).getLength()];
         for (int i=0; i<objs.length; i++) {
             for (int j=0; j<objs[0].length; j++) {
-                objs[i][j] = this.relation.get(i).getValAtPos(j).getKey().toString();
+                if (this.relation.get(i).getValAtPos(j).getKey() == null) {
+                    objs[i][j] = "NULL";
+                }
+                else {
+                    objs[i][j] = this.relation.get(i).getValAtPos(j).getKey().toString();
+                }
             }
         }
 
@@ -373,7 +377,7 @@ public class Rel {
      * Remove tuple from table
      */
     public void remove() {
-
+        // TODO - this might be put off for later bc it's technically not necessary for rel alg
     }
 
     /**
@@ -396,21 +400,21 @@ public class Rel {
      * Right outer natural join
      */
     public void rightNatJoin() {
-
+        // TODO
     }
 
     /**
      * Selects certain rows
      */
     public void select() {
-
+        // TODO
     }
 
     /**
      * Semijoin (???????)
      */
     public void semiJoin() {
-
+        // TODO
     }
 
     /**
@@ -617,10 +621,40 @@ public class Rel {
         tuple6.addAttr(a23);
         tuple6.addAttr(a24);
 
-        Rel relation3 = new Rel("Rel2");
+        Rel relation3 = new Rel("Rel3");
         try {
             relation3.insert(tuple5);
             relation3.insert(tuple6);
+        } catch (IllegalInsertException e) {
+            System.out.println(e.getMessage());
+        }
+
+        Attr a25 = new Attr(7, "null col");
+        Attr a26 = new Attr(464, "int stuff");
+        Attr a27 = new Attr("meh", "blugh");
+        Attr a28 = new Attr(44.2, "some shit");
+
+        Tup tuple7 = new Tup();
+        tuple7.addAttr(a25);
+        tuple7.addAttr(a26);
+        tuple7.addAttr(a27);
+        tuple7.addAttr(a28);
+
+        Attr a29 = new Attr(null, "null col");
+        Attr a30 = new Attr(175.29, "int stuff");
+        Attr a31 = new Attr(7777, "blugh");
+        Attr a32 = new Attr("mrgh", "some shit");
+
+        Tup tuple8 = new Tup();
+        tuple8.addAttr(a29);
+        tuple8.addAttr(a30);
+        tuple8.addAttr(a31);
+        tuple8.addAttr(a32);
+
+        Rel relation4 = new Rel("Rel4");
+        try {
+            relation4.insert(tuple7);
+            relation4.insert(tuple8);
         } catch (IllegalInsertException e) {
             System.out.println(e.getMessage());
         }
@@ -633,6 +667,9 @@ public class Rel {
 
         System.out.println("RELATION 3:");
         System.out.println(relation3.toString());
+
+        System.out.println("RELATION 4:");
+        System.out.println(relation4.toString());
 
 //        relation.printTable();
 
@@ -700,7 +737,7 @@ public class Rel {
         testing cross product
          */
 
-        relation = relation.crossProd(relation3);
+        relation = relation.crossProd(relation4);
         relation.printTable();
         System.out.println("\nNEW REL: \n" + relation.toString());
     }
