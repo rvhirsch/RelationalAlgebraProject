@@ -70,28 +70,38 @@ public class Rel {
      */
     public Rel crossProd(Rel rel) {
         Rel crossRel = new Rel("CrossProduct");
-        Tup tup = new Tup();
+        Tup tup1, tup2, newTup;
 
         for (int i=0; i<this.relation.size(); i++) {
-            tup = this.relation.get(i);
-
-            for (int j=0; j<rel.relation.size(); j++) {
-                for (int k=0; k<rel.relation.get(j).getLength(); k++) {
-                    tup.list.add(rel.relation.get(j).getAtPos(k));
-                    tup.cats.add(rel.relation.get(j).getColNames().get(k));
-
-                    System.out.println(tup.toString());
+            tup1 = this.relation.get(i);
+            for (int j=0; j<this.relation.size(); j++) {
+                tup2 = rel.relation.get(j);
+                newTup = makeFullTup(tup1, tup2);
+                try {
+                    crossRel.insert(newTup);
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
                 }
             }
+        }
+        return crossRel;
+    }
 
-            try {
-                crossRel.insert(tup);
-            } catch (IllegalInsertException e) {
-                System.out.println(e.getMessage());
-            }
+    private Tup makeFullTup(Tup first, Tup second) {
+        Tup tup = new Tup();
+        Attr attr;
+
+        for (int i=0; i<first.getLength(); i++) {
+            attr = first.getAtPos(i);
+            tup.addAttr(attr);
         }
 
-        return crossRel;
+        for (int i=0; i<second.getLength(); i++) {
+            attr = second.getAtPos(i);
+            tup.addAttr(attr);
+        }
+
+        return tup;
     }
 
     @Override
@@ -692,6 +702,6 @@ public class Rel {
 
         relation = relation.crossProd(relation3);
         relation.printTable();
-        System.out.println(relation.toString());
+        System.out.println("\nNEW REL: \n" + relation.toString());
     }
 }
