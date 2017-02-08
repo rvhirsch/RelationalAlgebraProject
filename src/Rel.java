@@ -134,6 +134,13 @@ public class Rel {
     }
 
     /**
+     * Group By
+     */
+    public void groupBy(String spec) {
+
+    }
+
+    /**
      * Returns relation name
      */
     public String getName() {
@@ -423,7 +430,6 @@ public class Rel {
      * Selects certain rows
      */
     public Rel select(String specs) throws IllegalSelectionException {
-        // TODO
         String[] specsArray = specs.split(" ");
         String col = specsArray[0];
         String goal = specsArray[2];
@@ -646,14 +652,6 @@ public class Rel {
 
         return rel;
     }
-
-    /**
-     * Semijoin (???????)
-     * This is used so rarely it's not really necessary
-     */
-//    public void semiJoin(Rel rel) {
-//        // TODO
-//    }
 
     /**
      * Get sum of group
