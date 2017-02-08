@@ -422,9 +422,229 @@ public class Rel {
     /**
      * Selects certain rows
      */
-    public void select(String specs) {
+    public Rel select(String specs) throws IllegalSelectionException {
         // TODO
         String[] specsArray = specs.split(" ");
+        String col = specsArray[0];
+        String goal = specsArray[2];
+
+        int colNum = this.relation.get(0).cats.indexOf(col);
+        int colType = this.relation.get(0).getTypeAtPos(colNum);
+
+        String val;
+        Tup tup;
+        Rel rel = new Rel("Selection Relation");
+
+        switch (specsArray[1]) {
+            case "==":      // any type
+                for (int i=0; i<this.relation.size(); i++) {
+                    tup = this.relation.get(i);
+                    if (tup.getValAtPos(colNum).getKey().equals(goal)) {
+                        try {
+                            rel.insert(tup);
+                        } catch (IllegalInsertException e) {
+                            System.out.println(e.getMessage());
+                        }
+                    }
+                }
+                break;
+            case "<=":      // type 1, 2, char
+                if (colType == 0) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Integer) tup.getValAtPos(colNum).getKey() <= Integer.parseInt(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 1) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Double) tup.getValAtPos(colNum).getKey() <= Double.parseDouble(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 2) {
+                    if (this.relation.get(0).getValAtPos(colNum).getKey().toString().length() == 1) {
+                        for (int i=0; i<this.relation.size(); i++) {
+                            tup = this.relation.get(i);
+                            val = (String) tup.getValAtPos(colNum).getKey();
+                            if (val.charAt(0) <= goal.charAt(0)) {
+                                try {
+                                    rel.insert(tup);
+                                } catch (IllegalInsertException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                    }
+
+                }
+                else {
+                    throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                }
+                break;
+            case ">=":      // type 1, 2, char
+                if (colType == 0) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Integer) tup.getValAtPos(colNum).getKey() >= Integer.parseInt(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 1) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Double) tup.getValAtPos(colNum).getKey() >= Double.parseDouble(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 2) {
+                    if (this.relation.get(0).getValAtPos(colNum).getKey().toString().length() == 1) {
+                        for (int i=0; i<this.relation.size(); i++) {
+                            tup = this.relation.get(i);
+                            val = (String) tup.getValAtPos(colNum).getKey();
+                            if (val.charAt(0) >= goal.charAt(0)) {
+                                try {
+                                    rel.insert(tup);
+                                } catch (IllegalInsertException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                    }
+
+                }
+                else {
+                    throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                }
+                break;
+            case "<":       // type 1, 2, char
+                if (colType == 0) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Integer) tup.getValAtPos(colNum).getKey() < Integer.parseInt(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 1) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Double) tup.getValAtPos(colNum).getKey() < Double.parseDouble(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 2) {
+                    if (this.relation.get(0).getValAtPos(colNum).getKey().toString().length() == 1) {
+                        for (int i=0; i<this.relation.size(); i++) {
+                            tup = this.relation.get(i);
+                            val = (String) tup.getValAtPos(colNum).getKey();
+                            if (val.charAt(0) < goal.charAt(0)) {
+                                try {
+                                    rel.insert(tup);
+                                } catch (IllegalInsertException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                    }
+
+                }
+                else {
+                    throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                }
+                break;
+            case ">":       // type 1, 2, char
+                if (colType == 0) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Integer) tup.getValAtPos(colNum).getKey() > Integer.parseInt(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 1) {
+                    for (int i=0; i<this.relation.size(); i++) {
+                        tup = this.relation.get(i);
+                        if ((Double) tup.getValAtPos(colNum).getKey() > Double.parseDouble(goal)) {
+                            try {
+                                rel.insert(tup);
+                            } catch (IllegalInsertException e) {
+                                System.out.println(e.getMessage());
+                            }
+                        }
+                    }
+                }
+                else if (colType == 2) {
+                    if (this.relation.get(0).getValAtPos(colNum).getKey().toString().length() == 1) {
+                        for (int i=0; i<this.relation.size(); i++) {
+                            tup = this.relation.get(i);
+                            val = (String) tup.getValAtPos(colNum).getKey();
+                            if (val.charAt(0) > goal.charAt(0)) {
+                                try {
+                                    rel.insert(tup);
+                                } catch (IllegalInsertException e) {
+                                    System.out.println(e.getMessage());
+                                }
+                            }
+                        }
+                    }
+                    else {
+                        throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                    }
+
+                }
+                else {
+                    throw new IllegalSelectionException("IllegalSelectionException: Cannot select on this type using this comparator");
+                }
+                break;
+            default:
+                throw new IllegalSelectionException("IllegalSelectionException: Cannot select using this comparator");
+        }
+
+        return rel;
     }
 
     /**
@@ -554,7 +774,7 @@ public class Rel {
         Attr a1 = new Attr(5, "integers");
         Attr a2 = new Attr(6.2, "doubles");
         Attr a3 = new Attr("thing3", "strings");
-        Attr a7 = new Attr(5, "other ints");
+        Attr a7 = new Attr("a", "chars");
 
         Tup tuple = new Tup();
         tuple.addAttr(a1);
@@ -565,7 +785,7 @@ public class Rel {
         Attr a4 = new Attr(12, "integers");
         Attr a5 = new Attr(17.5, "doubles");
         Attr a6 = new Attr("thing6", "strings");
-        Attr a8 = new Attr(18, "other ints");
+        Attr a8 = new Attr("b", "chars");
 
         Tup tuple2 = new Tup();
         tuple2.addAttr(a4);
@@ -755,8 +975,21 @@ public class Rel {
         testing cross product
          */
 
-        relation = relation.crossProd(relation4);
-        relation.printTable();
-        System.out.println("\nNEW REL: \n" + relation.toString());
+//        relation = relation.crossProd(relation4);
+//        relation.printTable();
+//        System.out.println("\nNEW REL: \n" + relation.toString());
+
+        /*
+        testing select
+         */
+
+        try {
+            relation = relation.select("chars < b");
+            relation.printTable();
+            System.out.println(relation.toString());
+        }
+        catch (IllegalSelectionException e) {
+            System.out.println(e.getMessage());
+        }
     }
 }

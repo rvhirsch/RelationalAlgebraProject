@@ -57,13 +57,13 @@ public class Attr {
     public Pair getValue() {
         switch (this.TYPE) {
             case 0:
-                return new Pair(this.intVal, 0);
+                return new Pair<Integer, Integer>(this.intVal, 0);
             case 1:
-                return new Pair(this.dubVal, 1);
+                return new Pair<Double, Integer>(this.dubVal, 1);
             case 2:
-                return new Pair(this.strVal, 2);
+                return new Pair<String, Integer>(this.strVal, 2);
             default:
-                return new Pair(null, 3);
+                return new Pair<Integer, Integer>(null, 3);
         }
     }
 
