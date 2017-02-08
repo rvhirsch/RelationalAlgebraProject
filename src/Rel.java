@@ -69,6 +69,7 @@ public class Rel {
      * Cartesian/cross product
      */
     public Rel crossProd(Rel rel) {
+        System.out.println("doing cross product now");
         Rel crossRel = new Rel("CrossProduct");
         Tup tup1, tup2, newTup;
 
@@ -76,17 +77,22 @@ public class Rel {
             tup1 = this.relation.get(i);
             for (int j=0; j<this.relation.size(); j++) {
                 tup2 = rel.relation.get(j);
+
                 newTup = makeFullTup(tup1, tup2);
                 try {
                     crossRel.insert(newTup);
                 } catch (IllegalInsertException e) {
                     System.out.println(e.getMessage());
+                    System.out.println("Problem in Tuple: " + newTup.toString() + "\n");
                 }
             }
         }
         return crossRel;
     }
 
+    /**
+     * Returns tup 1 + tup 2
+     */
     private Tup makeFullTup(Tup first, Tup second) {
         Tup tup = new Tup();
         Attr attr;
@@ -123,7 +129,7 @@ public class Rel {
     /**
      * Full outer natural join
      */
-    public void fullNatJoin() {
+    public void fullNatJoin(Rel rel) {
         // TODO
     }
 
@@ -145,6 +151,16 @@ public class Rel {
         else if (!this.relation.get(0).getColNames().equals(tup.getColNames())) {
             throw new IllegalInsertException("IllegalInsertException: Non-matching Column Types");
         }
+
+        for (int i=0; i<tup.getLength(); i++) {
+            if (this.relation.get(0).getValAtPos(i).getKey() == null) {
+                continue;
+            }
+            else if (this.relation.get(0).getTypeAtPos(i) != tup.getTypeAtPos(i)) {
+                throw new IllegalInsertException("IllegalInsertException: Non-matching Column Types");
+            }
+        }
+
         relation.add(tup);
     }
 
@@ -201,7 +217,7 @@ public class Rel {
     /**
      * Left outer natural join
      */
-    public void leftNatJoin() {
+    public void leftNatJoin(Rel rel) {
         // TODO
     }
 
@@ -291,7 +307,7 @@ public class Rel {
     /**
      * Natural join
      */
-    public void natJoin() {
+    public void natJoin(Rel rel) {
         // TODO
     }
 
@@ -376,7 +392,7 @@ public class Rel {
     /**
      * Remove tuple from table
      */
-    public void remove() {
+    public void remove(int rowToRemove) {
         // TODO - this might be put off for later bc it's technically not necessary for rel alg
     }
 
@@ -399,23 +415,25 @@ public class Rel {
     /**
      * Right outer natural join
      */
-    public void rightNatJoin() {
+    public void rightNatJoin(Rel rel) {
         // TODO
     }
 
     /**
      * Selects certain rows
      */
-    public void select() {
+    public void select(String specs) {
         // TODO
+        String[] specsArray = specs.split(" ");
     }
 
     /**
      * Semijoin (???????)
+     * This is used so rarely it's not really necessary
      */
-    public void semiJoin() {
-        // TODO
-    }
+//    public void semiJoin(Rel rel) {
+//        // TODO
+//    }
 
     /**
      * Get sum of group
@@ -525,7 +543,7 @@ public class Rel {
     /**
      * Updates variable value
      */
-    public void update() {
+    public void update(String locSpecs) {
 
     }
 
@@ -629,7 +647,7 @@ public class Rel {
             System.out.println(e.getMessage());
         }
 
-        Attr a25 = new Attr(7, "null col");
+        Attr a25 = new Attr(null, "null col");
         Attr a26 = new Attr(464, "int stuff");
         Attr a27 = new Attr("meh", "blugh");
         Attr a28 = new Attr(44.2, "some shit");
@@ -640,10 +658,10 @@ public class Rel {
         tuple7.addAttr(a27);
         tuple7.addAttr(a28);
 
-        Attr a29 = new Attr(null, "null col");
-        Attr a30 = new Attr(175.29, "int stuff");
-        Attr a31 = new Attr(7777, "blugh");
-        Attr a32 = new Attr("mrgh", "some shit");
+        Attr a29 = new Attr(7, "null col");
+        Attr a30 = new Attr(5748, "int stuff");
+        Attr a31 = new Attr("grump", "blugh");
+        Attr a32 = new Attr(546.13, "some shit");
 
         Tup tuple8 = new Tup();
         tuple8.addAttr(a29);
