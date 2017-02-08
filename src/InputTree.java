@@ -72,37 +72,38 @@ public class InputTree {
         String[] line = str.split(" ");
 
         System.out.println(Arrays.toString(line));
+        System.out.println();
 
         for (int cur = 0; cur < line.length; cur++) {
             InputTreeNode newNode = null;
-//            System.out.println(line[cur]);
+            paraTuple pt = null;
 
             switch (line[cur]) {
-                case "Π":   //project has one condition and one parameter, the parameter is 1 entry ahead
-//                    System.out.println("Input: Project");
-                    newNode = new InputTreeNode("project",line[cur+1]);
-                    this.addNode(newNode);
-                    cur += 1;
-                    break;
+                case "Π":
                 case "σ":   //select has on condition and one parameter, the parameter is 1 entry ahead
 //                    System.out.println("Input: Select");
-                    newNode = new InputTreeNode("select",line[cur+1]);
+                    newNode = new InputTreeNode(line[cur],line[cur+1]);
+
+                    System.out.println("Main loop: " + newNode.toString());
+
                     this.addNode(newNode);
                     cur += 1;
                     break;
+
+                case "U":
+                case "I":
                 case "X":   //cp has no conditions and two parameters, both parameters are its two children
 //                 System.out.println("Input: Join");
                     newNode = new InputTreeNode("cartesian product", true);
-                    paraTuple pt = this.getParams(newNode, line, cur+1);
+                    System.out.println("Main loop: " + newNode.toString());
+                    pt = this.getParams(newNode, line, cur+1);
+
                     this.addNode(pt.node);
                     cur = pt.index;
                     break;
-
                 default:
-
             }
         }
-
     }
 
     private paraTuple getParams(InputTreeNode parent, String[] line, int firstStartIndex) {
@@ -114,12 +115,16 @@ public class InputTree {
         loop1:  for (int cur = firstStartIndex; cur < line.length; cur++) {
             InputTreeNode newNode = null;
             InputTreeNode ptr = null;
+            paraTuple pt = null;
 //            System.out.println(line[cur]);
 
             switch (line[cur]) {
+                case "σ":
                 case "Π":   //project has on condition and one parameter, the parameter is 1 entry ahead
 //                    System.out.println("Input: Project");
-                    newNode = new InputTreeNode("project",line[cur+1]);
+                    newNode = new InputTreeNode(line[cur],line[cur+1]);
+
+                    System.out.println("Left Param loop: " + newNode.toString());
 
                     ptr = topNode;
                     while (ptr.getLeft() != null) {
@@ -133,21 +138,21 @@ public class InputTree {
                     cur += 1;
                     break;
 
-                case "σ":   //select has on condition and one parameter, the parameter is 1 entry ahead
-                    System.out.println("Input: Select | line[cur+1] = " + line[cur+1]);
+                case "I":
+                case "U":
+                case "X":
+                    newNode = new InputTreeNode(line[cur], true);
+                    pt = this.getParams(newNode, line, cur+1);
 
-                    newNode = new InputTreeNode("select",line[cur+1]);
+                    System.out.println("Left Param loop: " + newNode.toString());
 
                     ptr = topNode;
                     while (ptr.getLeft() != null) {
                         ptr = ptr.getLeft();
                     }
-                    ptr.setLeft(newNode);
-                    newNode.setRoot(ptr);
-
-//                 System.out.println("Right Param: " + newNode.toString());
-
-                    cur += 1;
+                    ptr.setLeft(pt.node);
+                    pt.node.setRoot(ptr);
+                    cur = pt.index;
                     break;
 
                 case ",": //time to move onto the next parameter
@@ -156,6 +161,8 @@ public class InputTree {
 
                 default: //the input is a rel
                     newNode = new InputTreeNode(line[cur]);
+
+                    System.out.println("Left Param loop: " + newNode.toString());
 
                     ptr = topNode;
                     while (ptr.getLeft() != null) {
@@ -170,15 +177,18 @@ public class InputTree {
             }
         }
 
-
-        loop2: for (int y = secondStartIndex; y < line.length; y++) {
+loop2: for (int y = secondStartIndex; y < line.length; y++) {
             InputTreeNode newNode = null;
             InputTreeNode ptr = null;
+            paraTuple pt = null;
 
             switch (line[y]) {
-                case "Π":   //project has on condition and one parameter, the parameter is 1 entry ahead
-//             System.out.println("Input: Project");
-                    newNode = new InputTreeNode("project",line[y+1]);
+                case "Π":
+                case "σ":   //select has on condition and one parameter, the parameter is 1 entry ahead
+//             System.out.println("Input: Select");
+                    newNode = new InputTreeNode(line[y],line[y+1]);
+
+                    System.out.println("Right Param loop: " + newNode.toString());
 
                     ptr = topNode;
                     while (ptr.getRight() != null) {
@@ -192,20 +202,21 @@ public class InputTree {
                     y += 1;
                     break;
 
-                case "σ":   //select has on condition and one parameter, the parameter is 1 entry ahead
-//             System.out.println("Input: Select");
-                    newNode = new InputTreeNode("select",line[y+1]);
+                case "I":
+                case "U":
+                case "X":
+                    newNode = new InputTreeNode(line[y], true);
+                    pt = this.getParams(newNode, line, y+1);
+
+                    System.out.println("Right Param loop: " + newNode.toString());
 
                     ptr = topNode;
                     while (ptr.getRight() != null) {
                         ptr = ptr.getRight();
                     }
-                    ptr.setRight(newNode);
-                    newNode.setRoot(ptr);
-
-//             System.out.println("Left Param: " + newNode.toString());
-
-                    y += 1;
+                    ptr.setRight(pt.node);
+                    pt.node.setRoot(ptr);
+                    y = pt.index;
                     break;
 
                 case "*": //time to move onto the next parameter
@@ -214,6 +225,8 @@ public class InputTree {
 
                 default: //the input is a rel
                     newNode = new InputTreeNode(line[y]);
+
+                    System.out.println("Right Param loop: " + newNode.toString());
 
                     ptr = topNode;
                     while (ptr.getRight() != null) {
@@ -255,7 +268,8 @@ public class InputTree {
         String test = "Π p σ A<18 X R1 , R2 *";
         String test2 = "Π p X σ name='amy' rel1 , σ price<10 rel2 *";
         String test3 = "Π name σ gender='female' X person , eats *";
-        tree.read(test2);
+        String test4 = "I Π name σ gender='female'&&pizza='mushroom' X Person , Eats * , Π name σ gender='female'&&pizza='pepperoni' X Person , Eats **";
+        tree.read(test);
 
         String paramTest = "X σ name='amy' rel1 , σ price<10 rel2";
 //        System.out.println(tree.getParams(nodeC, paramTest.split(" "), 1).toString());
