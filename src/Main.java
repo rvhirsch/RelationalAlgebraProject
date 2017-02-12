@@ -30,6 +30,10 @@ public class Main {
         this.tables.remove(table);
     }
 
+    public ArrayList<Rel> getTableList() {
+        return this.tables;
+    }
+
     /**
      *  Returns a string representing the database
      */
@@ -75,17 +79,30 @@ public class Main {
     }
 
 
-    public static void main(String[] args) throws IOException{
+    public static void main(String[] args) throws Exception{
         File file = new File("files\\SimpleInput.txt");
         Main main = new Main();
         System.out.println("Starting...");
         System.out.println();
 
-        //String test = "this is a test 8 9 89";
-        //System.out.println(Arrays.toString(test.split(" ")));
-
         main.populateDatabase(file);
         System.out.println(main.toString());
+
+        InputTree itree = new InputTree(main.getTableList());
+        String testQ1 = "X person , eats *";
+        String testQ2 = "σ age<18 X person , eats *";
+        String testQ3 = "Π name σ age<18 X person , eats *";
+        Rel resultRel = null;
+
+        itree.read(testQ1);
+        System.out.println(itree.toString());
+
+        System.out.println(testQ1);
+        System.out.println();
+        resultRel = itree.execute();
+
+        System.out.println("Resulting Rel:");
+        System.out.println(resultRel);
 
         System.out.println("Ended!");
     }

@@ -69,7 +69,7 @@ public class Rel {
      * Cartesian/cross product
      */
     public Rel crossProd(Rel rel) {
-        System.out.println("doing cross product now");
+//        System.out.println("doing cross product now");
         Rel crossRel = new Rel("CrossProduct");
         Tup tup1, tup2, newTup;
 
@@ -360,6 +360,43 @@ public class Rel {
 //        } catch(PrinterException e) {
 //            System.out.println(e.getMessage());
 //        }
+    }
+
+    /**
+     * Selects certain columns
+     */
+    public Rel proj(String col) {
+        ArrayList<String> colNames = new ArrayList<String>();
+        colNames.add(col);
+
+        ArrayList<Integer> cols = new ArrayList<Integer>();
+
+        for (int i=0; i<this.relation.get(0).getColNames().size(); i++) {
+            if (colNames.contains(this.relation.get(0).getColNames().get(i))) {
+                cols.add(i);
+            }
+        }
+
+        Rel newRel = new Rel("Projection Relation");
+        Tup newTup = new Tup();
+
+        for (int i=0; i<this.relation.size(); i++) {
+            for (int j=0; j<cols.size(); j++) {
+                newTup.addAttr(this.relation.get(i).getAtPos(j));
+            }
+            try {
+                newRel.insert(newTup);
+            } catch (IllegalInsertException e) {
+                System.out.println(e.getMessage());
+            }
+            newTup = new Tup();     // clear tuple values
+        }
+
+        for (int i=0; i<this.relation.size(); i++) {
+            this.relation.get(i).cats = colNames;
+        }
+
+        return newRel;
     }
 
     /**

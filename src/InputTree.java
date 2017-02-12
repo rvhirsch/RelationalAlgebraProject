@@ -4,6 +4,7 @@
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.lang.reflect.*;
 
 public class InputTree {
 
@@ -15,13 +16,25 @@ public class InputTree {
             this.index = index;
         }
     }
-    private InputTreeNode root;
 
-    public InputTree() {
+    private InputTreeNode root;
+    private ArrayList<Rel> relList;
+
+    public InputTree(ArrayList<Rel> relList) {
         this.root = null;
+        this.relList = relList;
     }
 
-    public void addNode(InputTreeNode node) {
+    private Rel getRel(String name) {
+        for (int x = 0; x < this.relList.size(); x++) {
+            if (this.relList.get(x).getName().equalsIgnoreCase(name)) {
+                return this.relList.get(x);
+            }
+        }
+        throw new IllegalArgumentException("Execute: Relation not found | String: " + name);
+    }
+
+    private void addNode(InputTreeNode node) {
         if (this.root == null) {
             this.root = node;
         } else {
@@ -34,7 +47,7 @@ public class InputTree {
         }
     }
 
-    public InputTreeNode getRoot() {
+    private InputTreeNode getRoot() {
         return root;
     }
 
@@ -63,8 +76,8 @@ public class InputTree {
     public void read(String str) {
         String[] line = str.split(" ");
 
-        System.out.println(Arrays.toString(line));
-        System.out.println();
+//        System.out.println(Arrays.toString(line));
+//        System.out.println();
 
         for (int cur = 0; cur < line.length; cur++) {
             InputTreeNode newNode = null;
@@ -102,7 +115,7 @@ public class InputTree {
                 case "I":
                 case "X":   //cp has no conditions and two parameters, both parameters are its two children
 //                 System.out.println("Input: Join");
-                    newNode = new InputTreeNode(line[cur], true);
+                    newNode = new InputTreeNode(line[cur], 2);
 //                    System.out.println("Main loop: " + newNode.toString());
                     pt = this.getParams(newNode, line, cur+1);
 
@@ -161,7 +174,7 @@ public class InputTree {
                 case "U":
                 case "I":
                 case "X":
-                    newNode = new InputTreeNode(line[cur], true);
+                    newNode = new InputTreeNode(line[cur], 2);
                     pt = this.getParams(newNode, line, cur+1);
 
 //                    System.out.println("Left Param loop: " + newNode.toString());
@@ -237,7 +250,7 @@ public class InputTree {
                 case "U":
                 case "I":
                 case "X":
-                    newNode = new InputTreeNode(line[y], true);
+                    newNode = new InputTreeNode(line[y], 2);
                     pt = this.getParams(newNode, line, y+1);
 
 //                    System.out.println("Right Param loop: " + newNode.toString());
@@ -366,7 +379,7 @@ public class InputTree {
         return toReturn;
     }
 
-    public  Rel execute() {
+    public  Rel execute() throws Exception {
         this.expandConditions();	//first thing so we can have a realistic trees
         Rel toReturn = null;		//final rel to return to user
 
@@ -381,103 +394,68 @@ public class InputTree {
             }
         }
 
-        //family nodes and variables
-        InputTreeNode parent = null;
-        InputTreeNode cousin = null;
         Rel transRel = null;
-        String methodName = null;
-        String conditional = null;
-        //main loop, collapsing the tree up, continue until we have reached the root node (when the node has no parent)
-        while (ptr.getRoot() != null) {
-            //get the name of the method represented by the node
 
+        //main loop, collapsing the tree up, continue until we have reached the root node (when the node has no parent)
+        while (ptr != null) {
+            InputTreeNode parent = null;
+            InputTreeNode cousin = null;
+            String methodName = null;
+            String conditional = null;
+            Method method = null;
+
+            //get the name of the method represented by the node
             switch(ptr.getName()) {
-                case "up":
-                    methodName = "update";
-                    break;
-                case "rnm":
-                    methodName = "rename";
-                    break;
-                case "rnmt":
-                    methodName = "renameTable";
-                    break;
-                case "rmv":
-                    methodName = "remove";
-                    break;
-                case "G":
-                    methodName = "groupBy";
-                    break;
-                case "in":
-                    methodName = "insert";
-                    break;
-                case "=":
-                    methodName = "equals";
-                    break;
-                case "pt":
-                    methodName = "printTable";
-                    break;
-                case "min":
-                    methodName = "min";
-                    break;
-                case "max":
-                    methodName = "max";
-                    break;
-                case "sum":
-                    methodName = "sum";
-                    break;
-                case "cnt":
-                    methodName = "count";
-                    break;
-                case "avg":
-                    methodName = "average";
-                    break;
                 case "Π":
                     methodName = "proj";
                     break;
                 case "σ":
                     methodName = "select";
                     break;
-                case "lnj":
-                    methodName = "leftNatJoin";
-                    break;
-                case "fnj":
-                    methodName = "fullNatJoin";
-                    break;
-                case "U":
-                    methodName = "union";
-                    break;
-                case "I":
-                    methodName = "intersection";
-                    break;
                 case "X":
-                    methodName = "update";
+                    methodName = "crossProd";
                     break;
                 default:
                     methodName = ptr.getName();
                     break;
             }
 
-            //set family nodes and variables
-            parent = ptr.getRoot();
-            if (ptr.getOp() == false) {
+            //rules for relations
+
+            if (ptr.getNodeType() == 3) {
+                parent = ptr.getRoot();
                 if (parent.getRight() == ptr) {
                     cousin = parent.getLeft();
                 } else if (parent.getLeft() == ptr) {
                     cousin = parent.getRight();
-                } else {
-                    cousin = null;
                 }
-            } else {
-                cousin = null;
             }
 
-            if (ptr.getCon() != null) {
-                conditional = ptr.getCon();
+            // Rules for Joins
+            else if (ptr.getNodeType() == 2) {
+                Rel rel1 = this.getRel(ptr.getLeft().getName());
+                Rel rel2 = this.getRel(ptr.getRight().getName());
+                method = Rel.class.getMethod(methodName, Rel.class);
+
+               transRel = (Rel) method.invoke(rel1, rel2);
             }
 
+            else if (ptr.getNodeType() == 1) {
+                Rel rel1 = null;
+                if (transRel == null) {
+                    if (ptr.getRight() != null) {
+                        rel1 = this.getRel(ptr.getRight().getName());
+                    } else if (ptr.getLeft() != null) {
+                        rel1 = this.getRel(ptr.getLeft().getName());
+                    }
+                } else {
+                    rel1 = transRel;
+                }
 
+                method = Rel.class.getMethod(methodName, String.class);
 
-
+                transRel = (Rel) method.invoke(rel1, booleanExpander(ptr.getCon()));
+            }
 
 
 
@@ -493,6 +471,7 @@ public class InputTree {
 //    		System.out.println("Parent: " + parent);
 //    		System.out.println("Cousin: " + cousin);
 //    		System.out.println();
+
 
             ptr = ptr.getRoot();
         }
@@ -511,11 +490,29 @@ public class InputTree {
 
 
 
+        return transRel;
+    }
+
+    private String booleanExpander (String toExpand) {
+        String toReturn = "";
+        //
+        String[] equation = toExpand.split("((?<=\\W+)|(?=\\W+))");
+        System.out.println(Arrays.toString(equation));
+
+        toReturn += equation[0];
+
+        if (equation.length > 1) {
+            for (int x = 1; x < equation.length; x++) {
+                toReturn += " ";
+                toReturn += equation[x];
+            }
+        }
+
         return toReturn;
     }
 
-    public static void main(String[] args) {
-        InputTree tree = new InputTree();
+    public static void main(String[] args) throws Exception {
+        InputTree tree = new InputTree(null);
 
         /****************************************************************************************
          * ****************************For Testing Node Interactions*****************************
@@ -547,15 +544,15 @@ public class InputTree {
 
 //        String paramTest = "X σ name='amy' rel1 , σ price<10 rel2";
 //        System.out.println(tree.getParams(nodeC, paramTest.split(" "), 1).toString());
-//        String test = "Π p σ A<18 X R1 , R2 *";
+//        String test = "Π name σ age<18 X person , eats *";
 //        String test2 = "Π p X σ name='amy' rel1 , σ price<10 rel2 *";
-        String test3 = "Π name σ gender='female' X person , eats *";
+//        String test3 = "Π name σ gender='female' X person , eats *";
 //        String test4 = "I Π name σ gender='female'&&pizza='mushroom' X Person , Eats * , Π name σ gender='female'&&pizza='pepperoni' X Person , Eats * *";
 //        String test5 = "I X Rel1 , Rel2 * , X Rel3 , Rel4 * *";
 //        String test6 = "I Π name X Rel1 , Rel2 * , X Rel3 , Rel4 * *";
 //        String test7 = "I Π name X Rel1 , Rel2 * , Π gender X Rel3 , Rel4 * *";
 
-        tree.read(test3);
+//        tree.read(test);
 
 
 
@@ -595,11 +592,14 @@ public class InputTree {
          * **************************************************************************************
          */
 
-        tree.execute();
+//        tree.execute();
 
 
 //        System.out.println();
 //        System.out.println(tree.toString());
+
+
+        System.out.println(tree.booleanExpander("tits"));
     }
 }
 

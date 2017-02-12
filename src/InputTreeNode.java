@@ -1,5 +1,8 @@
 public class InputTreeNode {
-    private boolean operator;   //True if the node is an operator, false if it is a relation
+    private int nodeType;   //0 = Unknown
+                            //1 = Operator that takes 1 relation and 1 condition
+                            //2 = Operator that takes 2 relations
+                            //3 = Relation
     private String name;    //the name of the relation, or the name of the operator
     private String conditional; //if node is an operator and needs a condition, you put this here
 
@@ -9,7 +12,7 @@ public class InputTreeNode {
 
 
     public InputTreeNode(String name) {
-        this.operator = false;
+        this.nodeType = 3;
         this.name = name;
         this.conditional = null;
 
@@ -19,7 +22,7 @@ public class InputTreeNode {
     }
 
     public InputTreeNode(String name, String conditional) {
-        this.operator = true;
+        this.nodeType = 1;
         this.name = name;
         this.conditional = conditional;
 
@@ -28,8 +31,8 @@ public class InputTreeNode {
         this.rightChild = null;
     }
 
-    public InputTreeNode(String name, boolean op) {
-        this.operator = op;
+    public InputTreeNode(String name, int type) {
+        this.nodeType = 2;
         this.name = name;
         this.conditional = null;
 
@@ -39,7 +42,7 @@ public class InputTreeNode {
     }
 
     public InputTreeNode() {
-        this.operator = false;
+        this.nodeType = 0;
         this.name = null;
         this.conditional = null;
 
@@ -64,12 +67,12 @@ public class InputTreeNode {
         this.conditional = conditional;
     }
 
-    public boolean getOp() {
-        return this.operator;
+    public int getNodeType() {
+        return this.nodeType;
     }
 
-    public void setOp(boolean operator) {
-        this.operator = operator;
+    public void setNodeType(int type) {
+        this.nodeType = type;
     }
 
     public InputTreeNode getRoot() {
@@ -105,11 +108,11 @@ public class InputTreeNode {
             }
         }
 
-        if (this.operator == false) {
+        if (this.nodeType == 3) {
             toReturn += "{Rel: " + this.name + "}";
-        } else if (this.operator == true && (this.leftChild == null || this.rightChild == null)) {
+        } else if (this.nodeType == 1) {
             toReturn += "{Op: " + this.name + ", Con: " + this.conditional + "}";
-        } else if (this.operator == true && this.leftChild != null && this.rightChild != null) {
+        } else if (this.nodeType == 2) {
             toReturn += "{Op: " + this.name + ", Param1: " + this.leftChild.getName() + ", Param2: " + this.rightChild.getName() + "}";
         }
         return toReturn;
