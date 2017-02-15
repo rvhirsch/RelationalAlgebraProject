@@ -133,11 +133,50 @@ public class Rel {
         // TODO
     }
 
+    private Tup makeNatJoinTup(Tup tup1, Tup tup2, ArrayList<String> same) {
+        Tup tup = new Tup();
+        Attr attr;
+
+        int col1Num;
+        int col2Num;
+
+        for (int i=0; i<same.size(); i++) {
+            col1Num = tup1.getColNames().indexOf(same.get(i));
+            col2Num = tup2.getColNames().indexOf(same.get(i));
+            System.out.println("t1Col: " + col1Num + ", t2Col: " + col2Num);
+
+            if (tup1.getValAtPos(col1Num).getKey().equals(tup2.getValAtPos(col2Num).getKey())) {
+                for (int j=0; j<tup1.getLength(); j++) {
+                    tup.addAttr(tup1.getAtPos(j));
+                }
+
+                for (int j=0; j<tup2.getLength(); j++) {
+                    attr = tup2.getAtPos(j);
+                    if (!attr.getColumnName().equals(same.get(i))) {
+                        tup.addAttr(tup2.getAtPos(j));
+                    }
+                }
+            }
+        }
+
+        return tup;
+    }
+
+    private ArrayList<String> getSameCols(ArrayList<String> t1, ArrayList<String> t2) {
+        ArrayList<String> same = new ArrayList<String>();
+        for (int i=0; i<t1.size(); i++) {
+            if (t2.contains(t1)) {
+                same.add(t1.get(i));
+            }
+        }
+        return same;
+    }
+
     /**
-     * Group By
+     * Group by - reorders tuples in rel
      */
     public void groupBy(String spec) {
-
+        // TODO
     }
 
     /**
@@ -229,7 +268,7 @@ public class Rel {
     }
 
     /**
-     * Get maximum per group
+     * Get maximum for given column
      */
     public Rel max(String colName) throws IllegalTypeException {
         Attr maxAttr;
@@ -270,7 +309,7 @@ public class Rel {
     }
 
     /**
-     * Get minimum per group
+     * Get minimum for given column
      */
     public Rel min(String colName) throws IllegalTypeException {
         Attr minAttr;
@@ -314,8 +353,30 @@ public class Rel {
     /**
      * Natural join
      */
-    public void natJoin(Rel rel) {
+    public Rel natJoin(Rel rel) {
         // TODO
+//        System.out.println("doing cross product now");
+        Rel joinRel = new Rel("FullNatJoin");
+        Tup tup1, tup2, newTup;
+        ArrayList<String> t1Cats = this.relation.get(0).cats;
+        ArrayList<String> t2Cats = rel.relation.get(0).cats;
+        ArrayList<String> same = getSameCols(t1Cats, t2Cats);
+
+        for (int i=0; i<this.relation.size(); i++) {
+            tup1 = this.relation.get(i);
+            for (int j=0; j<this.relation.size(); j++) {
+                tup2 = rel.relation.get(j);
+
+                newTup = makeNatJoinTup(tup1, tup2, same);
+                try {
+                    joinRel.insert(newTup);
+                } catch (IllegalInsertException e) {
+                    System.out.println(e.getMessage());
+                    System.out.println("Problem in Tuple: " + newTup.toString() + "\n");
+                }
+            }
+        }
+        return joinRel;
     }
 
     /**
@@ -806,9 +867,9 @@ public class Rel {
         /*
         SET UP RELATION 1
          */
-        Attr a1 = new Attr(5, "integers");
-        Attr a2 = new Attr(6.2, "doubles");
-        Attr a3 = new Attr("thing3", "strings");
+        Attr a1 = new Attr(19, "integers");
+        Attr a2 = new Attr(6.2, "dubss");
+        Attr a3 = new Attr("thing3", "strs");
         Attr a7 = new Attr("a", "chars");
 
         Tup tuple = new Tup();
@@ -818,8 +879,8 @@ public class Rel {
         tuple.addAttr(a7);
 
         Attr a4 = new Attr(12, "integers");
-        Attr a5 = new Attr(17.5, "doubles");
-        Attr a6 = new Attr("thing6", "strings");
+        Attr a5 = new Attr(17.5, "dubs");
+        Attr a6 = new Attr("thing6", "strs");
         Attr a8 = new Attr("b", "chars");
 
         Tup tuple2 = new Tup();
@@ -1018,13 +1079,21 @@ public class Rel {
         testing select
          */
 
-        try {
-            relation = relation.select("chars < b");
-            relation.printTable();
-            System.out.println(relation.toString());
-        }
-        catch (IllegalSelectionException e) {
-            System.out.println(e.getMessage());
-        }
+//        try {
+//            relation = relation.select("chars < b");
+//            relation.printTable();
+//            System.out.println(relation.toString());
+//        }
+//        catch (IllegalSelectionException e) {
+//            System.out.println(e.getMessage());
+//        }
+
+        /*
+        testing fullNatJoin
+         */
+
+        relation = relation.natJoin(relation2);
+        relation.printTable();
+        System.out.println(relation.toString());
     }
 }
