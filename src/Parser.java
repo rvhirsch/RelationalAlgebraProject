@@ -18,14 +18,36 @@ public class Parser {
             curWord += input.charAt(x);
 
             switch(curWord) {
-                case("\\pi"):
-                case("\\sigma"):
-//                    statement += "SELECT " + nextWord;
+                case("\\pi"):       // project
+                    statement += "SELECT ";
 
-
-
+                    prevWord = "SELECT ";
+                    curWord = "";
                     break;
-                case("\\bigtimes"):
+                case("\\sigma"):    // select
+                    statement += "SELECT * FROM ";
+
+                    prevWord = "SELECT * FROM ";
+                    curWord = "";
+                    break;
+                case("\\bigtimes"): // cross product
+                    statement += "CROSS JOIN ";
+
+                    prevWord = "CROSS JOIN ";
+                    curWord = "";
+                    break;
+                case("\\bowtie"):   // natural join
+                    statement += "NATURAL JOIN ";
+
+                    prevWord = "NATURAL JOIN ";
+                    curWord = "";
+                    break;
+                case("\\rho"):      // rename
+                    statement += "AS ";
+
+                    prevWord = "AS ";
+                    curWord = "";
+                    break;
             }
 
 
