@@ -1,5 +1,3 @@
-import java.util.Arrays;
-
 public class Parser {
 
 
@@ -134,7 +132,7 @@ public class Parser {
     public String parseStringToSQL(String str) {
         str = str.replace("  ", " ");   // standardize input (just in case??)
         String[] commands = str.split(" ");
-        System.out.println("COMMANDS: " + Arrays.toString(commands));
+//        System.out.println("COMMANDS: " + Arrays.toString(commands));
 
         String sql = "";    // output string
 
@@ -151,15 +149,17 @@ public class Parser {
                     cols = getCols(commands, i);
                     sql += cols;
                     i += cols.split(" ").length;
+//                    System.out.println("i = " + i);
 
                     sql += " FROM ";
 
                     from = getFrom(commands, i);
-                    System.out.println("from: " + from.substring(1, from.length()-2));
-                    from = parseStringToSQL(from.substring(1, from.length()-2));
+                    System.out.println("from: " + from.substring(1, from.length()-1));
+
+                    from = parseStringToSQL(from.substring(1, from.length()-1));
                     System.out.println("from post parse: " + from);
 
-                    i += from.split(" ").length;
+                    i += from.split(" ").length + 1;
 
                     sql += "(" + from;
 
@@ -169,6 +169,7 @@ public class Parser {
                         where = getWhere(commands, i);
                         sql += "SELECT * FROM ";
                         i += where.split(" ").length + 1;
+//                        System.out.println("i = " + i);
 
 //                        System.out.println("comm[i] = " + commands[i]);
                         while (commands[i].equals("&&") || commands[i].equals("||")) {
@@ -180,10 +181,11 @@ public class Parser {
                             }
                             where += getWhere(commands, i);
 //                            System.out.println("where: " + where);
-                            i += 3;
+                            i += 4;
+//                            System.out.println("while i: " + i);
                         }
 
-                        from = getFrom(commands, i);
+                        from = getFrom(commands, i-1);
                         sql += parseStringToSQL(from);
 
                         i += from.split(" ").length + 1;
@@ -243,7 +245,8 @@ public class Parser {
 
                     break;
                 default:
-                    System.out.println("COMM: " + comm);
+//                    System.out.println("COMM: " + comm);
+//                    System.out.println("i = " + i);
 
                     sql += comm + " ";
             }
@@ -281,7 +284,7 @@ public class Parser {
         String from = "";
         from += comms[i+1] + " ";
         for (int j=i+2; j<comms.length; j++) {
-            System.out.println("from at j = " + j + ": " + from);
+//            System.out.println("from at j = " + j + ": " + from);
             if (!comms[j].contains(")")) {
                 from += comms[j] + " ";
             }
@@ -297,7 +300,9 @@ public class Parser {
     public static void main(String[] args) throws Exception {
         Parser p = new Parser();
         String sampleInput1 = "\\pi_{name}(Person)";
-        String sampleInput2 = "\\pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";
+
+        // SELECT name, age  FROM (SELECT * FROM person INNER JOIN eats ) WHERE age > 16
+        String sampleInput2 = "\\pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";     // WORKS
 
         // SELECT * FROM (person INNER JOIN eats ) WHERE age > 10 OR name == 'sally' 
         String sampleInput3 = "\\sigma_{age > 10 || name == 'sally'}(Person \\bowtie Eats)";    // WORKS
@@ -308,11 +313,11 @@ public class Parser {
         String latexToStr;
         String strToSql;
 
-//        System.out.println("LaTeX Input 1: " + sampleInput1);
-//        latexToStr = p.parseLatexToString(sampleInput1);
-//        System.out.println("String Output: " + latexToStr);
-//        strToSql = p.parseStringToSQL(latexToStr);
-//        System.out.println("SQL Output: " + strToSql);
+        System.out.println("LaTeX Input 1: " + sampleInput1);
+        latexToStr = p.parseLatexToString(sampleInput1);
+        System.out.println("String Output: " + latexToStr);
+        strToSql = p.parseStringToSQL(latexToStr);
+        System.out.println("SQL Output: " + strToSql);
 
         System.out.println("\nLaTeX Input 2: " + sampleInput2);
         latexToStr = p.parseLatexToString(sampleInput2);
@@ -320,16 +325,16 @@ public class Parser {
         strToSql = p.parseStringToSQL(latexToStr);
         System.out.println("SQL Output: " + strToSql);
 
-//        System.out.println("\nLaTeX Input 3: " + sampleInput3);
-//        latexToStr = p.parseLatexToString(sampleInput3);
-//        System.out.println("String Output: " + latexToStr);
-//        strToSql = p.parseStringToSQL(latexToStr);
-//        System.out.println("SQL Output: " + strToSql);
+        System.out.println("\nLaTeX Input 3: " + sampleInput3);
+        latexToStr = p.parseLatexToString(sampleInput3);
+        System.out.println("String Output: " + latexToStr);
+        strToSql = p.parseStringToSQL(latexToStr);
+        System.out.println("SQL Output: " + strToSql);
 
-//        System.out.println("\nLaTeX Input 4: " + sampleInput4);
-//        latexToStr = p.parseLatexToString(sampleInput4);
-//        System.out.println("String Output: " + latexToStr);
-//        strToSql = p.parseStringToSQL(latexToStr);
-//        System.out.println("SQL Output: " + strToSql);
+        System.out.println("\nLaTeX Input 4: " + sampleInput4);
+        latexToStr = p.parseLatexToString(sampleInput4);
+        System.out.println("String Output: " + latexToStr);
+        strToSql = p.parseStringToSQL(latexToStr);
+        System.out.println("SQL Output: " + strToSql);
     }
 }
