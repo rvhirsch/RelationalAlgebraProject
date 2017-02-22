@@ -176,7 +176,8 @@ public class GUI {
                     addLog("Queried Databased with query: " + sampleQuery);
 
                 } catch (SQLException e1) {
-                    e1.printStackTrace();
+//                    e1.printStac
+//                    kTrace();
                 }
             }
         });

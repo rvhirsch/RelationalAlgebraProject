@@ -1,5 +1,6 @@
 import org.h2.command.Prepared;
 
+import javax.management.Query;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -307,6 +308,21 @@ public class DB {
         db.populateDatabase(filePath);
         System.out.println(db.toString());
         System.out.println("-----------------------------------");
+
+        queryResult[] qr = db.getEverything();
+        for (int x = 0; x < qr.length; x++) {
+            for (int y = 0; y < qr[x].getData().length; y++) {
+                for (int z = 0; z < qr[x].getData()[y].length; z++) {
+                    if (z > 0) {
+                        System.out.print(", ");
+                    }
+
+                    System.out.print(qr[x].getData()[y][z]);
+                }
+                System.out.println();
+            }
+            System.out.println();
+        }
 //        System.out.println();
 //        queryResult[] qr = db.getEverything();
 //
