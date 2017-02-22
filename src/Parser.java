@@ -245,15 +245,10 @@ public class Parser {
 
                     break;
                 default:
-//                    System.out.println("COMM: " + comm);
-//                    System.out.println("i = " + i);
-
                     sql += comm + " ";
             }
 
         }
-
-//        System.out.println("COMM ARRAY: " + Arrays.toString(commands));
 
         return sql;
     }
@@ -284,7 +279,6 @@ public class Parser {
         String from = "";
         from += comms[i+1] + " ";
         for (int j=i+2; j<comms.length; j++) {
-//            System.out.println("from at j = " + j + ": " + from);
             if (!comms[j].contains(")")) {
                 from += comms[j] + " ";
             }
@@ -310,6 +304,9 @@ public class Parser {
         // SELECT * FROM (person INTERSECT eats)
         String sampleInput4 = "\\sigma (Person \\cap Eats)";    // WORKS
 
+        // SELECT name, age  FROM (SELECT * FROM (eats INNER JOIN (person INTERSECT pizzeria ) ) ) WHERE age > 10 OR name == ' sally'
+        String sampleInput5 = "\\pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";    // WORKS
+
         String latexToStr;
         String strToSql;
 
@@ -333,6 +330,12 @@ public class Parser {
 
         System.out.println("\nLaTeX Input 4: " + sampleInput4);
         latexToStr = p.parseLatexToString(sampleInput4);
+        System.out.println("String Output: " + latexToStr);
+        strToSql = p.parseStringToSQL(latexToStr);
+        System.out.println("SQL Output: " + strToSql);
+
+        System.out.println("\nLaTeX Input 5: " + sampleInput5);
+        latexToStr = p.parseLatexToString(sampleInput5);
         System.out.println("String Output: " + latexToStr);
         strToSql = p.parseStringToSQL(latexToStr);
         System.out.println("SQL Output: " + strToSql);
