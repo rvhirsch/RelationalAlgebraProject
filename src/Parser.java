@@ -153,11 +153,11 @@ public class Parser {
 
                     sql += " FROM ";
 
-                    from = getFrom(commands, i);
-                    System.out.println("from: " + from.substring(1, from.length()-1));
+                    from = getFrom(commands, i) + ")";
+//                    System.out.println("from: " + from.substring(1, from.length()-1));
 
                     from = parseStringToSQL(from.substring(1, from.length()-1));
-                    System.out.println("from post parse: " + from);
+//                    System.out.println("from post parse: " + from);
 
                     i += from.split(" ").length + 1;
 
