@@ -22,10 +22,10 @@
    <children>
       <GridPane prefHeight="491.0" prefWidth="573.0" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.rowSpan="2">
         <columnConstraints>
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.0" minWidth="-Infinity" prefWidth="84.0" />
-          <ColumnConstraints hgrow="SOMETIMES" maxWidth="252.0" minWidth="-Infinity" prefWidth="85.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="196.0" minWidth="-Infinity" prefWidth="85.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.0" minWidth="9.0" prefWidth="64.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="238.0" minWidth="-Infinity" prefWidth="155.0" />
+          <ColumnConstraints hgrow="SOMETIMES" maxWidth="256.0" minWidth="-Infinity" prefWidth="126.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="244.0" minWidth="-Infinity" prefWidth="125.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="416.0" minWidth="9.0" prefWidth="156.0" />
         </columnConstraints>
         <rowConstraints>
           <RowConstraints maxHeight="534.0" minHeight="10.0" prefHeight="327.0" vgrow="SOMETIMES" />
@@ -34,12 +34,12 @@
          <children>
             <VBox alignment="TOP_CENTER" prefHeight="200.0" prefWidth="100.0" spacing="5.0">
                <children>
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" text="Select">
+                  <Button fx:id="selectCalcButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#selectCalcButton" prefHeight="75.0" prefWidth="75.0" text="Select">
                      <padding>
                         <Insets top="5.0" />
                      </padding></Button>
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" text="Project" />
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" text="Cross Join" />
+                  <Button fx:id="projectCalcButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#projectCalcButton" prefHeight="75.0" prefWidth="75.0" text="Project" />
+                  <Button fx:id="crossJoinCalcButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#crossJoinCalcButton" prefHeight="75.0" prefWidth="75.0" text="Cross Join" />
                   <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" text="Natural Join" />
                </children>
                <opaqueInsets>
@@ -100,18 +100,30 @@
                   <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="75.0" prefWidth="75.0" text="Rename" />
                </children>
             </VBox>
-            <VBox alignment="TOP_RIGHT" prefHeight="113.0" prefWidth="60.0" spacing="5.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
-               <GridPane.margin>
-                  <Insets />
-               </GridPane.margin>
+            <HBox alignment="TOP_RIGHT" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+               <children>
+                  <VBox prefHeight="200.0" prefWidth="100.0">
+                     <children>
+                        <Button fx:id="getLatexSrcButton" mnemonicParsing="false" onAction="#getLatexButton" prefHeight="112.0" prefWidth="99.0" text="Get LaTeX Source" wrapText="true" />
+                     </children>
+                  </VBox>
+                  <VBox alignment="TOP_RIGHT" prefHeight="113.0" prefWidth="60.0" spacing="5.0" GridPane.columnIndex="2" GridPane.columnSpan="2" GridPane.rowIndex="1">
+                     <GridPane.margin>
+                        <Insets />
+                     </GridPane.margin>
+                     <padding>
+                        <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+                     </padding>
+                     <children>
+                        <Button fx:id="clearButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="160.0" text="Clear" />
+                        <Button fx:id="executeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#executeButton" prefHeight="50.0" prefWidth="160.0" text="Execute" />
+                     </children>
+                  </VBox>
+               </children>
                <padding>
                   <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
                </padding>
-               <children>
-                  <Button maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="160.0" text="Clear" />
-                  <Button fx:id="executeButton" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#executeButton" prefHeight="50.0" prefWidth="160.0" text="Execute" />
-               </children>
-            </VBox>
+            </HBox>
             <ScrollPane prefHeight="114.0" prefWidth="125.0" GridPane.columnSpan="2" GridPane.rowIndex="1">
                <content>
                   <TextArea fx:id="latexSourceTextArea" prefHeight="200.0" prefWidth="279.0" promptText="LaTeX Source Code:" />
@@ -231,6 +243,7 @@
                   <MenuItem mnemonicParsing="false" text="Log" />
                   <MenuItem mnemonicParsing="false" text="Equation SRC" />
                   <MenuItem mnemonicParsing="false" text="Equation Pic" />
+                  <MenuItem mnemonicParsing="false" text="LaTeX SRC" />
               </items>
             </Menu>
             <Menu mnemonicParsing="false" text="Help">

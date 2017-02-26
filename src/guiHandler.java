@@ -21,16 +21,25 @@ public class guiHandler {
 
     private DB db;
 
-    @FXML private Pane resultPane;
-    @FXML private TableView dbTable;
-    @FXML private TableView resultTableView;
-    @FXML private TabPane dbTabPane;
-    @FXML private TextField dbFileField;
-    @FXML private TextArea logTextArea;
-    @FXML private Button executeButton;
-    @FXML private Button populateDBButton;
     @FXML private WebView webView;
     @FXML private WebEngine webEngine;
+
+    @FXML private Pane resultPane;
+    @FXML private TabPane dbTabPane;
+    @FXML private TableView dbTable;
+    @FXML private TableView resultTableView;
+
+    @FXML private TextField dbFileField;
+    @FXML private TextArea logTextArea;
+    @FXML private TextArea latexSourceTextArea;
+
+    @FXML private Button executeButton;
+    @FXML private Button populateDBButton;
+    @FXML private Button getLatexSrcButton;
+    @FXML private Button selectCalcButton;
+    @FXML private Button projectCalcButton;
+    @FXML private Button crossJoinCalcButton;
+
 
 
 
@@ -117,18 +126,28 @@ public class guiHandler {
         }
     }
 
+    private String getLaTeX() {
+        return webEngine.executeScript("getLatex()").toString();
+    }
+
+    private void addInputToEE(int id) {
+        System.out.println("addInput(" + id + ")");
+        webEngine.executeScript("addInput(" + id + ")");
+    }
+
+    private String getLatexFromEquation() {
+        return webEngine.executeScript("getLatex()").toString();
+    }
+
     @FXML private void initialize() throws Exception{
         //initialize database
         this.db = new DB();
         setDBTabPane();
         setResultTable(null);
 
-        webEngine = webView.getEngine();
-
-        URL url = getClass().getResource("testPage.html");
-        webView.getEngine().load(url.toExternalForm());
-
-        resultPane.setStyle("-fx-border-color: black");
+        String filePath = "C:/Users/Josh/Documents/Capstone Project/RelationalAlgebraProject/src/webStuff/app/html/EquationEditor.html";
+        webView.getEngine().load(new File(filePath).toURI().toURL().toExternalForm());
+        this.webEngine = webView.getEngine();
     }
 
     @FXML private void populateDatabaseButton() throws Exception {
@@ -175,4 +194,22 @@ public class guiHandler {
         String sampleQuery = "SELECT * FROM Person";
         setResultTable(db.query(sampleQuery));
     }
+
+    @FXML private void getLatexButton() {
+        latexSourceTextArea.setText(getLaTeX());
+    }
+
+    @FXML private void selectCalcButton() {
+        addInputToEE(0);
+    }
+
+    @FXML private void projectCalcButton() {
+//        addInputToEE(1);
+        webEngine.executeScript("test2()");
+    }
+
+    @FXML private void crossJoinCalcButton() {
+        addInputToEE(2);
+    }
+
 }

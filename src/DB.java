@@ -299,7 +299,17 @@ public class DB {
         return toReturn;
     }
 
-
+    public boolean checkQuery(String query) {
+        try {
+            connection.setAutoCommit(false);
+            ResultSet rs = null;
+            PreparedStatement pstat = connection.prepareStatement(query);
+            rs = pstat.executeQuery();
+            return true;
+        } catch (SQLException e) {
+            return false;
+        }
+    }
 
 
     public static void main(String[] args) throws Exception {
@@ -309,20 +319,20 @@ public class DB {
         System.out.println(db.toString());
         System.out.println("-----------------------------------");
 
-        queryResult[] qr = db.getEverything();
-        for (int x = 0; x < qr.length; x++) {
-            for (int y = 0; y < qr[x].getData().length; y++) {
-                for (int z = 0; z < qr[x].getData()[y].length; z++) {
-                    if (z > 0) {
-                        System.out.print(", ");
-                    }
-
-                    System.out.print(qr[x].getData()[y][z]);
-                }
-                System.out.println();
-            }
-            System.out.println();
-        }
+//        queryResult[] qr = db.getEverything();
+//        for (int x = 0; x < qr.length; x++) {
+//            for (int y = 0; y < qr[x].getData().length; y++) {
+//                for (int z = 0; z < qr[x].getData()[y].length; z++) {
+//                    if (z > 0) {
+//                        System.out.print(", ");
+//                    }
+//
+//                    System.out.print(qr[x].getData()[y][z]);
+//                }
+//                System.out.println();
+//            }
+//            System.out.println();
+//        }
 //        System.out.println();
 //        queryResult[] qr = db.getEverything();
 //
@@ -334,5 +344,7 @@ public class DB {
 //            System.out.println();
 //        }
 //        System.out.println(db.toString());
+
+        System.out.println(db.checkQuery("SELECT dicks FROM @#$%"));
     }
 }
