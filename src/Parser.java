@@ -46,7 +46,7 @@ public class Parser {
             }
 
             switch (curWord) {
-                case ("pi"):       // project
+                case ("Pi"):       // project
                     if (input.charAt(x + 1) != ' ' && input.charAt(x + 1) == '_') {
                         statement += "PI ";
                         curWord = "";
@@ -55,6 +55,11 @@ public class Parser {
                     break;
                 case ("sigma"):    // select
                     statement += "SIGMA ";
+                    curWord = "";
+
+                    break;
+                case ("G"):
+                    statement += "GROUP ";
                     curWord = "";
 
                     break;
@@ -68,7 +73,7 @@ public class Parser {
                     curWord = "";
 
                     break;
-                case ("rho"):      // rename
+                case ("rho"):      // rename    TODO
                     statement += "RENAME ";
                     curWord = "";
 
@@ -103,7 +108,7 @@ public class Parser {
                     curWord = "";
 
                     break;
-                case("-"):  // or - 2nd possibility
+                case("-"):  // or - 2nd possibility     TODO
                     statement += "EXCEPT ";
                     curWord = "";
 
@@ -139,6 +144,7 @@ public class Parser {
         String from = "";   // table name
         String where = "";  // where clause
         String cols = "";
+        String group = "";
 
         String comm;    // current command in list
         for (int i=0; i<commands.length; i++) {
@@ -199,6 +205,69 @@ public class Parser {
                         i += from.split(" ").length + 1;
                         sql += from;
                     }
+
+//                    System.out.println("GROUP: " + group);
+//                    if (!group.equals("")) {
+//                        sql += "GROUP BY " + group;
+//                    }
+
+                    break;
+                case ("(SIGMA"):    // select
+                    if (str.contains("<") || str.contains(">") || str.contains("=")) {
+                        where = getWhere(commands, i);
+                        sql += "(SELECT * FROM ";
+                        i += where.split(" ").length + 1;
+//                        System.out.println("i = " + i);
+
+//                        System.out.println("comm[i] = " + commands[i]);
+                        while (commands[i].equals("&&") || commands[i].equals("||")) {
+                            if (commands[i].equals("&&")) {
+                                where += "AND ";
+                            }
+                            else if (commands[i].equals("||")) {
+                                where += "OR ";
+                            }
+                            where += getWhere(commands, i);
+//                            System.out.println("where: " + where);
+                            i += 4;
+//                            System.out.println("while i: " + i);
+                        }
+
+                        from = getFrom(commands, i-1);
+                        sql += parseStringToSQL(from);
+
+                        i += from.split(" ").length + 1;
+
+
+                        sql += "WHERE " + where;
+
+                        if (!group.equals("")) {
+                            sql += "GROUP BY " + group;
+                        }
+                    }
+                    else {
+                        sql += "SELECT * FROM ";
+                        from = getFrom(commands, i);
+
+                        i += from.split(" ").length + 1;
+                        sql += from;
+
+                        if (!group.equals("")) {
+                            sql = sql.substring(0, sql.length()-1);
+                            sql += " GROUP BY " + group;
+                        }
+                    }
+
+//                    System.out.println("GROUP: " + group);
+//                    if (!group.equals("")) {
+//                        sql += "GROUP BY " + group;
+//                    }
+
+                    break;
+                case ("GROUP"):
+                    group = getGroup(commands, i);
+//                    System.out.println("GRP: " + group + "\n");
+                    i += group.split(" ").length;
 
                     break;
                 case ("UNION"):
@@ -291,36 +360,51 @@ public class Parser {
         return from;
     }
 
+    private String getGroup(String[] comms, int i) {
+        String group = "";
+        for (int j=i+1; j<comms.length; j++) {
+            if (comms[j].contains(",")) {
+                group += comms[j] + " ";
+            }
+            if (!comms[j].contains((","))) {
+                group += comms[j];
+                return group;
+            }
+        }
+        return group;
+    }
+
     public static void main(String[] args) throws Exception {
         Parser p = new Parser();
-        String sampleInput1 = "\\pi_{name}(Person)";
+        String sampleInput1 = "\\Pi_{name}(Person)";
 
         // SELECT name, age  FROM (SELECT * FROM person INNER JOIN eats ) WHERE age > 16
-        String sampleInput2 = "\\pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";     // WORKS
+        String sampleInput2 = "\\Pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";     // WORKS
 
         // SELECT * FROM (person INNER JOIN eats ) WHERE age > 10 OR name == 'sally' 
         String sampleInput3 = "\\sigma_{age > 10 || name == 'sally'}(Person \\bowtie Eats)";    // WORKS
 
-        // SELECT * FROM (person INTERSECT eats)
-        String sampleInput4 = "\\sigma (Person \\cap Eats)";    // WORKS
+        // SELECT * FROM (person NATURAL JOIN eats) group by age
+        String sampleInput4 = "\\G_{name, age}(\\sigma(Person \\bowtie Eats))";    // WORKS
+//        String sampleInput4 = "\\sigma(Person \\bowtie Eats)";    // WORKS
 
         // SELECT name, age  FROM (SELECT * FROM (eats INNER JOIN (person INTERSECT pizzeria ) ) ) WHERE age > 10 OR name == ' sally'
-        String sampleInput5 = "\\pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";    // WORKS
+        String sampleInput5 = "\\Pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";    // WORKS
 
         String latexToStr;
         String strToSql;
 
-        System.out.println("LaTeX Input 1: " + sampleInput1);
-        latexToStr = p.parseLatexToString(sampleInput1);
-        System.out.println("String Output: " + latexToStr);
-        strToSql = p.parseStringToSQL(latexToStr);
-        System.out.println("SQL Output: " + strToSql);
+//        System.out.println("LaTeX Input 1: " + sampleInput1);
+//        latexToStr = p.parseLatexToString(sampleInput1);
+//        System.out.println("String Output: " + latexToStr);
+//        strToSql = p.parseStringToSQL(latexToStr);
+//        System.out.println("SQL Output: " + strToSql);
 
-        System.out.println("\nLaTeX Input 2: " + sampleInput2);
-        latexToStr = p.parseLatexToString(sampleInput2);
-        System.out.println("String Output: " + latexToStr);
-        strToSql = p.parseStringToSQL(latexToStr);
-        System.out.println("SQL Output: " + strToSql);
+//        System.out.println("\nLaTeX Input 2: " + sampleInput2);
+//        latexToStr = p.parseLatexToString(sampleInput2);
+//        System.out.println("String Output: " + latexToStr);
+//        strToSql = p.parseStringToSQL(latexToStr);
+//        System.out.println("SQL Output: " + strToSql);
 
         System.out.println("\nLaTeX Input 3: " + sampleInput3);
         latexToStr = p.parseLatexToString(sampleInput3);
@@ -334,10 +418,10 @@ public class Parser {
         strToSql = p.parseStringToSQL(latexToStr);
         System.out.println("SQL Output: " + strToSql);
 
-        System.out.println("\nLaTeX Input 5: " + sampleInput5);
-        latexToStr = p.parseLatexToString(sampleInput5);
-        System.out.println("String Output: " + latexToStr);
-        strToSql = p.parseStringToSQL(latexToStr);
-        System.out.println("SQL Output: " + strToSql);
+//        System.out.println("\nLaTeX Input 5: " + sampleInput5);
+//        latexToStr = p.parseLatexToString(sampleInput5);
+//        System.out.println("String Output: " + latexToStr);
+//        strToSql = p.parseStringToSQL(latexToStr);
+//        System.out.println("SQL Output: " + strToSql);
     }
 }
