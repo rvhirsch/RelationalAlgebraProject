@@ -110,7 +110,7 @@ public class Parser {
                     curWord = "";
 
                     break;
-                case("\\-"):  // or - 2nd possibility     TODO
+                case("\\-"):
                     statement += "EXCEPT ";
                     curWord = "";
 
