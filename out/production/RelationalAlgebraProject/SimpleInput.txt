@@ -1,5 +1,5 @@
 person
-id name age money
+id-int name-string age-int money-int
 0 bob 19 25
 1 linda 22 23
 2 sally 15 5
@@ -7,10 +7,16 @@ id name age money
 4 joe 43 2
 **
 eats
-id name pizza
+id-int name-string pizza-string
 0 bob cheese
 1 linda pepperoni
 2 sally hawaiian
 3 bill meat
 4 joe nothing
+**
+Pizzeria
+name-string price-int
+bobs 22
+dominoes 3
+chuckys 1
 **
