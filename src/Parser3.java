@@ -8,15 +8,16 @@ public class Parser3 {
     private final static String PI = "\\Pi_";
     private final static String SIGMA1 = "\\sigma";
     private final static String SIGMA2 = "\\sigma_";
+    private final static String AGGR = "\\G_";                // TODO
     private final static String NATJOIN = "\\bowtie";
     private final static String CROSSJOIN = "\\bigtimes";
     private final static String UNION = "\\cup";
     private final static String INTERSECT = "\\cap";
     private final static String RENAME = "\\rho";             // TODO
-    private final static String AND1 = "\\vee";               // TODO
-    private final static String AND2 = "\\land";              // TODO
-    private final static String OR1 = "\\wedge";              // TODO
-    private final static String OR2 = "\\lor";                // TODO
+    private final static String AND1 = "\\vee";
+    private final static String AND2 = "\\land";
+    private final static String OR1 = "\\wedge";
+    private final static String OR2 = "\\lor";
     private final static String EXCEPT = "-";
     private final static String LOJ = "\\leftouterjoin";
     private final static String ROJ = "\\rightouterjoin";
@@ -34,6 +35,7 @@ public class Parser3 {
     }
 
     private String[] latexToArray() {
+        this.latex.replace(AND1, "&&").replace(AND2, "&&").replace(OR1, "||").replace(OR2, "||");
         return this.latex.split("(?=[\\({])");      // splits on \ { ( but keeps delimiters
     }
 
@@ -73,7 +75,7 @@ public class Parser3 {
                 i += from.split("(?=[\\({])").length;
                 this.sql += "SELECT * FROM " + from;
             }
-            else if (curr.equals(SIGMA2)) {
+            else if (curr.equals(SIGMA2) || curr.equals(AGGR)) {
                 where = getCols(i);     // literally same code as getWhere() would have
                 i += where.split("(?=[\\({])").length + 1;
 
@@ -85,6 +87,9 @@ public class Parser3 {
 
                 i += from.split("(?=[\\({])").length;
                 this.sql += "SELECT * FROM " + from + " WHERE " + where;
+            }
+            else if (curr.equals(AGGR)) {
+
             }
             else if (curr.contains(NATJOIN)) {
 //                join = curr.substring(NATJOIN.length());
