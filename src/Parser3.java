@@ -10,7 +10,7 @@ public class Parser3 {
     private final static String SIGMA2 = "\\sigma_";
     private final static String AGGR = "\\G_";                // TODO
     private final static String NATJOIN = "\\bowtie";
-    private final static String CROSSJOIN = "\\bigtimes";
+    private final static String CROSSJOIN = "\\times";
     private final static String UNION = "\\cup";
     private final static String INTERSECT = "\\cap";
     private final static String RENAME = "\\rho";             // TODO
@@ -27,7 +27,7 @@ public class Parser3 {
 
     private String latex;
     private String[] texArray;
-    private String sql;
+    public String sql;
 
     public Parser3(String eqn) {
         this.latex = eqn;
@@ -252,7 +252,7 @@ public class Parser3 {
     }
 
     private String replacePrev(String str) {
-        return str.replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
+        return str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
                 .replace(NATJOIN, " INNER JOIN ").replace(CROSSJOIN, ", ").replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");

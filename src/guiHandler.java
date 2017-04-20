@@ -13,7 +13,6 @@ import javafx.scene.control.*;
 import javafx.scene.control.TableColumn;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.scene.text.TextAlignment;
@@ -29,7 +28,6 @@ import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
-import java.sql.SQLIntegrityConstraintViolationException;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -109,7 +107,7 @@ public class guiHandler {
     @FXML private WebView webView;
     @FXML private WebEngine webEngine;
 
-    @FXML private Pane resultPane;
+    @FXML private TabPane tabResultPane;
     @FXML private TabPane dbTabPane;
     @FXML private TableView dbTable;
     @FXML private TableView resultTableView;
@@ -764,7 +762,11 @@ public class guiHandler {
             TableColumn tabCol3 = new TableColumn("Sit");
             TableColumn tabCol4 = new TableColumn("Amet");
             tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
-            resultPane.getChildren().add(tableView);
+
+            Tab tab = new Tab("Lorem");
+            tab.setContent(tableView);
+
+            tabResultPane.getTabs().add(tab);
 
         } else {
             TableView<String[]> table = new TableView<>();
@@ -793,7 +795,68 @@ public class guiHandler {
                 table.setItems(data);
             }
             resultTableView = table;
-            resultPane.getChildren().add(resultTableView);
+
+            String num = "";
+            switch (tabResultPane.getTabs().size()) {
+                case(1):
+                    num = "One";
+                    break;
+                case(2):
+                    num = "Two";
+                    break;
+                case(3):
+                    num = "Three";
+                    break;
+                case(4):
+                    num = "Four";
+                    break;
+                case(5):
+                    num = "Five";
+                    break;
+                case(6):
+                    num = "Six";
+                    break;
+                case(7):
+                    num = "Seven";
+                    break;
+                case(8):
+                    num = "Eight";
+                    break;
+                case(9):
+                    num = "Nine";
+                    break;
+                case(10):
+                    num = "Ten";
+                    break;
+                case(11):
+                    num = "Eleven";
+                    break;
+                case(12):
+                    num = "Twelve";
+                    break;
+                case(13):
+                    num = "Thirteen";
+                    break;
+                case(14):
+                    num = "Fourteen";
+                    break;
+                case(15):
+                    num = "Fifteen";
+                    break;
+            }
+
+            Tab tab = new Tab(num);
+            tab.setContent(resultTableView);
+
+            if (tabResultPane.getTabs().get(0).getText().equalsIgnoreCase("Lorem")) {
+                tabResultPane.getTabs().remove(0);
+            }
+
+            if (tabResultPane.getTabs().size() >= 15) {
+                tabResultPane.getTabs().remove(15,tabResultPane.getTabs().size());
+            }
+
+            tabResultPane.getTabs().add(tab);
         }
     }
 
@@ -1000,16 +1063,19 @@ public class guiHandler {
     }
 
     @FXML private void executeButton() throws Exception {
-        System.out.println(webEngine.executeScript("getLatex()"));
-        String ls = (String)webEngine.executeScript("getLatex()");
+//        System.out.println(webEngine.executeScript("getLatex()"));
+//        String ls = (String)webEngine.executeScript("getLatex()");
 
-        ls = ls.replace("\\left(","(");
-        ls = ls.replace("\\right)",")");
-        System.out.println(ls);
+//        ls = ls.replace("\\left(","(");
+//        ls = ls.replace("\\right)",")");
 
+//        Parser3 p = new Parser3(ls);
+//        String temp = p.sql;
+//        System.out.println("temp: " + temp);
 
-//        String sampleQuery = "SELECT * FROM Person";
-//        setResultTable(db.query(sampleQuery));
+        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person NATURAL JOIN Eats) WHERE pizza='cheese' AND money<100)";
+        setResultTable(db.query(sampleQuery));
+//        setResultTable(db.query(temp));
     }
 
     @FXML private void openEditDBWindowButton() throws Exception{
@@ -1019,7 +1085,7 @@ public class guiHandler {
    }
 
     @FXML private void MenuItemExit() {
-        Stage stage = (Stage)resultPane.getScene().getWindow();
+        Stage stage = (Stage) tabResultPane.getScene().getWindow();
         stage.close();
     }
 

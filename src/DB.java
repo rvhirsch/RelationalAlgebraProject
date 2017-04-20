@@ -467,7 +467,7 @@ public class DB {
 
 
     public static void main(String[] args) throws Exception {
-        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/files/SimpleInputBad";
+        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/files/SimpleInput";
         DB db = new DB();
         db.populateDatabase(filePath);
         System.out.println(db.toString());
@@ -553,6 +553,8 @@ public class DB {
 //        db.clearRow("Eats", values);
 
 //        System.out.println(db.toString());
+
+//        db.query("SELECT name FROM (SELECT * FROM (Person, Eats) WHERE age>18 OR loyal==true)");
 
     }
 }

@@ -1,18 +1,18 @@
 person
-id-int name-string age-int money-int
-0 bob 19 25
-1 linda 22 23
-2 sally 15 5
-3 bill 20 99
-4 joe 43 2
+id-int name-string age-int money-int loyal-boolean
+0 bob 19 25 true
+1 linda 22 23 false
+2 sally 15 5 true
+3 bill 20 99 false
+4 joe 43 2 true
 **
 eats
-id-int name-string pizza-string
-0 bob cheese
-1 linda pepperoni
-2 sally hawaiian
-3 bill meat
-4 joe nothing
+id-int pizza-string
+0 cheese
+1 pepperoni
+2 hawaiian
+3 meat
+4 nonePizzaWithLeftBeef
 **
 Pizzeria
 name-string price-int
