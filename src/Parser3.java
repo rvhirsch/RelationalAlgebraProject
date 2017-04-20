@@ -23,6 +23,8 @@ public class Parser3 {
     private final static String ROJ = "\\rightouterjoin";
     private final static String FOJ = "\\fullouterjoin";
 
+    private final static String REGEX = "(?=[\\\\({])";
+
     private String latex;
     private String[] texArray;
     private String sql;
@@ -35,58 +37,50 @@ public class Parser3 {
     }
 
     private String[] latexToArray() {
-        this.latex.replace(AND1, "&&").replace(AND2, "&&").replace(OR1, "||").replace(OR2, "||");
-        return this.latex.split("(?=[\\({])");      // splits on \ { ( but keeps delimiters
+        this.latex = replacePrev(this.latex);
+
+        return this.latex.split(REGEX);      // splits on { ( but keeps delimiters
     }
 
     private String parseArrayToSQL() {
-        String curr, cols, from, where, join;
+        String curr, cols, from, where, join, group;
         Parser3 psql;
-
-//        System.out.println("CURR EQN: " + Arrays.toString(texArray));
 
         for (int i=0; i<this.texArray.length; i++) {
             curr = this.texArray[i];
+//            if (curr.equals("_")) {
+//                // TODO
+//                group = getGroup(i);
+//                // this.texArray[i] += group;
+//                i++;
+//
+//                if (this.texArray[i].contains(AGGR)) {
+//
+//                }
+//                else if (this.texArray[i].contains(PI)) {
+//
+//                }
+//                else if (this.texArray[i].contains(SIGMA1)) {
+//
+//                }
+//                else if (this.texArray[i].contains(SIGMA2)) {
+//
+//                }
+//
+//            }
+//            else if (curr.contains(AGGR)) {
+//                System.out.println("IN AGGR");
+//
+//                // TODO
+//            }
             if (curr.equals(PI)) {
-                cols = getCols(i);
-                i += cols.split("(?=[\\({])").length + 1;
-                cols = cols.substring(1, cols.length()-1);
-
-                from = getFrom(i);
-
-                from = from.substring(1, from.length()-1);
-
-                psql = new Parser3(from);
-                from = psql.sql;
-
-                int split = from.split("(?=[\\({])").length;
-//                i += from.split("(?=[\\({])").length;
-                i += split;
-
-                if (split > 1) {
-                    this.sql += "SELECT " + cols + " FROM (" + from + ")";
-                }
-                else {
-                    this.sql += "SELECT " + cols + " FROM " + from;
-                }
+                i = piSelect(i);
             }
             else if (curr.equals(SIGMA1)) {
-                from = getFrom(i);
-                i += from.split("(?=[\\({])").length;
-                this.sql += "SELECT * FROM " + from;
+                i = sigma1Select(i);
             }
-            else if (curr.equals(SIGMA2) || curr.equals(AGGR)) {
-                where = getCols(i);     // literally same code as getWhere() would have
-                i += where.split("(?=[\\({])").length + 1;
-
-                where = where.replace("||", "OR").replace("&&", "AND").substring(1, where.length()-1);
-
-                from = getFrom(i);
-                psql = new Parser3(replaceWords(from));
-                from = psql.sql;
-
-                i += from.split("(?=[\\({])").length;
-                this.sql += "SELECT * FROM " + from + " WHERE " + where;
+            else if (curr.equals(SIGMA2)) {
+                i = sigma2Select(i);
             }
             else if (curr.equals(AGGR)) {
 
@@ -132,7 +126,7 @@ public class Parser3 {
                 this.sql += curr.replace(EXCEPT, " EXCEPT ");
             }
             else {
-                System.out.println("CURR: " + curr);
+//                System.out.println("thing: " + curr);
                 this.sql += curr;
             }
         }
@@ -140,9 +134,87 @@ public class Parser3 {
         return this.sql.replace("  ", " ");
     }
 
+    private int piSelect(int i) {
+        String cols = getCols(i);
+        cols = cols.substring(1, cols.length() - 1);
+
+        i += cols.split(REGEX).length + 1;
+
+        String from = getFrom(i);
+        from = from.substring(1, from.length()-1);
+
+        Parser3 psql = new Parser3(from);
+        from = psql.sql;
+
+        int split = from.split(REGEX).length;
+//      i += from.split(REGEX).length;
+        i += split + 1;
+
+        if (split > 1) {
+            this.sql += "SELECT " + cols + " FROM (" + from + ")";
+        }
+        else {
+            this.sql += "SELECT " + cols + " FROM " + from;
+        }
+
+        return i;
+    }
+
+    private int sigma1Select(int i) {
+        String from = getFrom(i+1);
+        from = from.substring(1, from.length()-1);
+
+        System.out.println("from: " + from);
+
+        int split = from.split(REGEX).length;
+        i += split + 1;
+
+        if (split > 1) {
+            this.sql += "SELECT * FROM (" + from + ")";
+        }
+        else {
+            this.sql += "SELECT * FROM " + from;
+        }
+
+        return i;
+    }
+
+    private int sigma2Select(int i) {
+//        System.out.println("in sig 2 select, i(1) = " + i + ": " + this.texArray[i]);
+
+        String where = getCols(i);     // literally same code as getWhere() would have
+        i += where.split(REGEX).length + 1;
+//        System.out.println("i(2) = " + i + ": " + this.texArray[i] + "\n");
+
+        where = where.replace("||", "OR").replace("&&", "AND").substring(1, where.length()-1);
+
+        String from = getFrom(i);
+        Parser3 psql = new Parser3(replaceWords(from));
+        from = psql.sql;
+        i += from.split(REGEX).length + 1;
+
+        this.sql += "SELECT * FROM " + from + " WHERE " + where;
+
+//        System.out.println("i(3) = " + i + ": " + this.texArray[i]);
+
+        return i;
+    }
+
+    private String getGroup(int pos) {
+        String grp = "";
+        String phrase = this.texArray[pos+1];
+        char[] arr = phrase.toCharArray();
+        int i = 0;
+        while (arr[i] != '}') {
+            grp += arr[i];
+        }
+        return grp;
+    }
+
     private String getFrom(int pos) {
         String from = "";
         String curr = "";
+
         for (int i=pos; i<this.texArray.length; i++) {
 //            System.out.println("from curr: " + from);
 
@@ -165,9 +237,8 @@ public class Parser3 {
         String curr = "";
 
         for (int i=pos+1; i<this.texArray.length; i++) {
-//            System.out.println("cols curr: " + curr);
-
             curr = this.texArray[i];
+//            System.out.println("cols curr: " + curr);
             if (curr.contains("}")) {
                 cols += curr;
                 return cols;
@@ -180,11 +251,19 @@ public class Parser3 {
         return cols;
     }
 
+    private String replacePrev(String str) {
+        return str.replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
+                .replace(NATJOIN, " INNER JOIN ").replace(CROSSJOIN, ", ").replace(EXCEPT, "-")
+                .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
+                .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");
+    }
+
     private String replaceWords(String str) {
-        return str.replace(PI, "\\Pi_").replace(SIGMA1, "\\sigma").replace(SIGMA2, "\\sigma_").replace(NATJOIN, "\\bowtie")
-                .replace(CROSSJOIN, "\\bigtimes").replace(UNION, "\\cup").replace(INTERSECT, "\\cap").replace(RENAME, "\\rho")
-                .replace(AND1, "\\vee").replace(AND2, "\\land").replace(OR1, "\\wedge").replace(OR2, "\\lor").replace(EXCEPT, "\\-")
-                .replace(LOJ, "\\leftouterjoin").replace(ROJ, "\\rightouterjoin").replace(FOJ, "\\fullouterjoin");
+        return str.replace("PI_", "\\Pi_").replace("sigma(", "\\sigma(").replace("sigma_", "\\sigma_")
+                .replace(UNION, "\\cup").replace(INTERSECT, "\\cap").replace(RENAME, "\\rho");
+//                .replace(NATJOIN, "\\bowtie").replace(CROSSJOIN, "\\bigtimes")
+                //.replace(AND1, "\\vee").replace(AND2, "\\land").replace(OR1, "\\wedge").replace(OR2, "\\lor").replace(EXCEPT, "\\-")
+                //.replace(LOJ, "\\leftouterjoin").replace(ROJ, "\\rightouterjoin").replace(FOJ, "\\fullouterjoin");
     }
 
     public String runTest(String input, int num, Parser3 p) {
@@ -196,14 +275,17 @@ public class Parser3 {
 
     public static void main(String[] args) {
         String sampleInput1 = "\\Pi_{name}(Person)";
-        String sampleInput2 = "\\Pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie \\sigma(Eats))";
-        String sampleInput3 = "\\sigma_{age > 10 || name == 'sally' && mother == 'not me'}(Person \\bowtie Eats)";
-        String sampleInput4 = "_{age, name}\\G_{max(age)}(Person \\bowtie Eats)";
-        String sampleInput5 = "\\Pi_{name, age}(\\sigma_{age < 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";
-        String sampleInput6 = "\\sigma(Person)\\bowtie Eats\\bowtie\\sigma_{age < 10}(Person)";
+        String sampleInput2 = "\\Pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";
+        String sampleInput3 = "\\sigma_{age > 10 || name == 'sally'}(Person \\bowtie Eats)";
+        String sampleInput4 = "_{age, name}\\G_{max(age), name} (Person \\bowtie Eats)";
+        String sampleInput5 = "\\Pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";
+        String sampleInput6 = "\\sigma(Person)";
 
-        Parser3 p = new Parser3(sampleInput1);
-        System.out.println("Latex: " + sampleInput1);
+        // actual test stuff //
+        String input = sampleInput2;
+
+        Parser3 p = new Parser3(input);
+        System.out.println("Latex: " + input);
         System.out.println("Array: " + Arrays.toString(p.latexToArray()));
         System.out.println("SQL: " + p.sql);
     }
