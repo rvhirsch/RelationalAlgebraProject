@@ -1,13 +1,7 @@
-import org.h2.command.Prepared;
-
-import javax.management.Query;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
+
 
 public class DB {
     private Connection connection;
@@ -22,6 +16,103 @@ public class DB {
      */
     public DB () {
         this.connection = getDBConnection();
+    }
+
+    public void addTable(String tableName, String[] colNames, String[] colTypes) throws SQLException{
+        PreparedStatement createPS = null;
+        String createQuery = "CREATE TABLE " + tableName + " (";
+
+        for (int x = 0; x < colNames.length; x++) {
+            createQuery += colNames[x] + " ";
+
+            //parse the datatype for each col
+            if (colTypes[x].equalsIgnoreCase("string")) {
+                createQuery += "varchar(255)";
+            } else if (colTypes[x].equalsIgnoreCase("boolean")) {
+                createQuery += "BOOLEAN";
+            } else if (colTypes[x].equalsIgnoreCase("Integer")) {
+                createQuery += "INT";
+            }
+
+            //add a comma, if need
+            if (x < colNames.length-1) {
+                createQuery += ", ";
+            }
+        }
+        createQuery += ")";
+
+        System.out.println("query: " + createQuery);
+
+        createPS = connection.prepareStatement(createQuery);
+        createPS.executeUpdate();
+        createPS.close();
+    }
+
+    public void addRow(String tableName, Object[] row) throws SQLException{
+        PreparedStatement insertPS = null;
+        String insertQ = "INSERT INTO " + tableName + " VALUES (";
+
+        for (int x = 0; x < row.length; x++) {
+            if (row[x].getClass().equals(String.class)) {
+                insertQ += "'" + row[x] + "'";
+            } else {
+                insertQ += row[x].toString();
+            }
+
+            if (x < row.length-1) {
+                insertQ += ", ";
+            }
+        }
+        insertQ += ")";
+//        System.out.println("Statement: " + insertQ);
+        insertPS = connection.prepareStatement(insertQ);
+        insertPS.executeUpdate();
+        insertPS.close();
+    }
+
+    public void clearTable(String tableName) throws SQLException{
+        PreparedStatement dropPS = null;
+        String dropQ = "Drop TABLE " + tableName;
+
+        if (tableName != null) {
+            dropPS = connection.prepareStatement(dropQ);
+            dropPS.executeUpdate();
+            dropPS.close();
+        } else {
+            System.out.println("Null Table Name!");
+        }
+    }
+
+    /**
+     *
+     * @param tableName
+     * @param values    2d array, first row is column names, second row is values
+     */
+    public void clearRow(String tableName, Object[][] values) throws SQLException{
+        PreparedStatement dropPS = null;
+        String dropQ = "DELETE FROM " + tableName + " WHERE ";
+
+        System.out.println("Values Length: " + values[0].length);
+
+        for (int x = 0; x < values[0].length; x++) {
+            dropQ += values[0][x];
+
+            if (values[1][x].getClass().equals(Integer.class)) {
+                dropQ += " = " + values[1][x];
+            } else {
+                dropQ += " = '" + values[1][x] + "'";
+            }
+            if (x < values[0].length-1) {
+                System.out.println("Made it, x: " + x);
+                dropQ += " AND ";
+            }
+        }
+        System.out.println("String: " + dropQ);
+
+        dropPS = connection.prepareStatement(dropQ);
+        dropPS.execute();
+        dropPS.close();
+
     }
 
     /**
@@ -75,11 +166,13 @@ public class DB {
         rs = pstat.executeQuery();
         ResultSetMetaData rsmd = rs.getMetaData();
         String[] columnNames = new String[rsmd.getColumnCount()];
+        String[] colTypes = new String[rsmd.getColumnCount()];
         ArrayList<Object[]> data = new ArrayList<Object[]>();
 
         //load the categories into the category array
         for (int x = 1; x <= rsmd.getColumnCount(); x++) {
             columnNames[x-1] = rsmd.getColumnName(x);
+            colTypes[x-1] = rsmd.getColumnTypeName(x);
         }
 
         //load the data into the data array
@@ -93,7 +186,7 @@ public class DB {
 
         rs.close();
         pstat.close();
-        return new queryResult(columnNames, data.toArray(new Object[data.size()][]));
+        return new queryResult(columnNames, colTypes, data.toArray(new Object[data.size()][]));
     }
 
     /**
@@ -102,14 +195,16 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    public void populateDatabase (String path) throws IOException, SQLException {
+    public String populateDatabase(String path) throws IOException, SQLException {
         //setup the file reader objects
         File file = new File(path);
-        BufferedReader br = new BufferedReader(new FileReader(file));
+        BufferedReader br = null;
+        br = new BufferedReader(new FileReader(file));
         String curLine = "";
 
         while ((curLine = br.readLine()) != null) {     //main loop that reads in table titles and categories
-//            System.out.println(curLine);
+            //            System.out.println(curLine);
+            String curStream = curLine;
             //objects to create queries
             PreparedStatement createPS = null;
             PreparedStatement insertPS = null;
@@ -123,6 +218,8 @@ public class DB {
             //get the table categories
             curLine = br.readLine();
 
+            curStream += " " + curLine;
+
             //get the categories for the table, add them to the create and insert strings
             //set the category array to only the category names for later use
             String[] categories = curLine.split(" ");
@@ -131,6 +228,8 @@ public class DB {
 
             if (tup[1].equalsIgnoreCase("string")) {    //if the data type is a string, record varchar(255)
                 createQuery += "varchar(255)";
+            } else if (tup[1].equalsIgnoreCase("boolean")) {
+                createQuery += "BOOLEAN";
             } else {
                 createQuery += tup[1];
             }
@@ -142,6 +241,8 @@ public class DB {
                 createQuery += tup[0] + " ";
                 if (tup[1].equalsIgnoreCase("string")) {    //if the data type is a string, record varchar(255)
                     createQuery += "varchar(255)";
+                } else if (tup[1].equalsIgnoreCase("boolean")) {
+                    createQuery += "BOOLEAN";
                 } else {
                     createQuery += tup[1];
                 }
@@ -159,39 +260,54 @@ public class DB {
             }
             insertQuery += ")";
 
-//            System.out.println(createQuery);
-//            System.out.println(insertQuery);
-
             //insert the table into the database
             createPS = connection.prepareStatement(createQuery);
             createPS.executeUpdate();
             createPS.close();
 
-//            System.out.println(Arrays.toString(categories));
 
             //now that we know the general form of the inserts, we can loop and substitute all the values
             //get the values to insert into the table
             while (!(curLine = br.readLine()).contains("**")) {
-//                System.out.println(curLine);
+                //                System.out.println(curLine);
+                curStream += " " + curLine;
                 String[] entries = curLine.split(" ");
+
                 insertPS = connection.prepareStatement(insertQuery);
+//                System.out.println("1: " + insertPS.toString());
 
                 for (int z = 0; z < entries.length; z++) {
-                    switch(categories[z]) {
-                        case("int"):
-                            insertPS.setInt(z+1,Integer.parseInt(entries[z]));
+                    switch (categories[z]) {
+                        case ("int"):
+                            try {
+                                insertPS.setInt(z + 1, Integer.parseInt(entries[z]));
+                            } catch (Exception e) {
+                                return curStream;
+                            }
                             break;
-                        case("string"):
-                            insertPS.setString(z+1, entries[z]);
+                        case ("string"):
+                            try {
+                                insertPS.setString(z + 1, entries[z]);
+                            } catch (Exception e) {
+                                return curStream;
+                            }
+                            break;
+                        case ("boolean"):
+                            try {
+                                insertPS.setString(z + 1, entries[z]);
+                            } catch (Exception e) {
+                                return curStream;
+                            }
                             break;
                     }
                 }
                 //insert the updates
-//                System.out.println(insertQuery);
+//                System.out.println("2: " + insertPS.toString());
                 insertPS.executeUpdate();
                 insertPS.close();
             }
         }
+        return null;
     }
 
     /**
@@ -228,6 +344,17 @@ public class DB {
             toReturn.add(temp);
         }
         return toReturn.toArray(new queryResult[toReturn.size()]);
+    }
+
+    public DBInfo createDBInfoObject() throws SQLException{
+        DBInfo toReturn = new DBInfo();
+
+        queryResult[] qrs = this.getEverything();
+
+        for (int x = 0; x < qrs.length; x++) {
+            toReturn.addTable(qrs[x].getName(), qrs[x].getColumns(), qrs[x].getColTypes());
+        }
+        return toReturn;
     }
 
     /**
@@ -272,6 +399,9 @@ public class DB {
                         case("VARCHAR"):
                             toReturn += "string";
                             break;
+                        case("BOOLEAN"):
+                            toReturn += "boolean";
+                            break;
                         default:
                     }
                 }
@@ -311,9 +441,33 @@ public class DB {
         }
     }
 
+    private static boolean isInteger(String str) {
+        if (str == null) {
+            return false;
+        }
+        int length = str.length();
+        if (length == 0) {
+            return false;
+        }
+        int i = 0;
+        if (str.charAt(0) == '-') {
+            if (length == 1) {
+                return false;
+            }
+            i = 1;
+        }
+        for (; i < length; i++) {
+            char c = str.charAt(i);
+            if (c < '0' || c > '9') {
+                return false;
+            }
+        }
+        return true;
+    }
+
 
     public static void main(String[] args) throws Exception {
-        String filePath = "files\\SimpleInput.txt";
+        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/files/SimpleInputBad";
         DB db = new DB();
         db.populateDatabase(filePath);
         System.out.println(db.toString());
@@ -345,6 +499,60 @@ public class DB {
 //        }
 //        System.out.println(db.toString());
 
-        System.out.println(db.checkQuery("SELECT dicks FROM @#$%"));
+
+//        String[] colNames = {"col1", "col2", "col3", "col4", "col5"};
+//        String[] colNames2 = {"Lorem","test", "Ipsum","testtwo"};
+//        String[] colTypes = {"Integer", "boolean", "string", "Integer", "string"};
+//        String[] colTypes2 = {"String","Integer","String","Integer"};
+//        Object[] row = {1, true, "test5", 4, "test3"};
+//        Object[] row2 = {11, false, "test2", 44, "test4"};
+//        db.addTable("TestTable", colNames2, colTypes2);
+//
+//        System.out.println();
+//        System.out.println(db.toString());
+//        System.out.println("-----------------------------------");
+//
+//        db.addRow("TestTable", row);
+//        db.addRow("TestTable", row2);
+//
+//        System.out.println();
+//        System.out.println(db.toString());
+//        System.out.println("-----------------------------------");
+
+        //        db.clearTable("TestTable");
+//
+//        System.out.println();
+//        System.out.println("-----------------------------------");
+//        System.out.println(db.toString());
+
+
+//        DBInfo dbi = db.createDBInfoObject();
+//
+//        System.out.println("Size: " + dbi.getTBNames().size());
+//        for (int x = 0; x < dbi.getTBNames().size(); x++) {
+//            System.out.println(dbi.getTBNames().get(x));
+//        }
+
+//        System.out.println(dbi.getNumOfColOfTable("person"));
+
+
+
+//        Object[][]values = {{"ID", "NAME","PIZZA"}, {3,"bill","meat"}};
+
+//        System.out.println(Arrays.deepToString(values));
+
+//        String dropQ = "DELETE FROM Eats WHERE name='bill';";
+//        String addQ = "INSERT INTO TestTable VALUES (11, false, 'test2', 44, 'test4')";
+//        String addQ2 = "INSERT INTO Eats VALUES (7, 'tom', 'pizzaz')";
+//        System.out.println(dropQ);
+
+//        PreparedStatement dropPS = db.connection.prepareStatement(dropQ);
+//        dropPS.execute();
+//        dropPS.close();
+
+//        db.clearRow("Eats", values);
+
+//        System.out.println(db.toString());
+
     }
 }

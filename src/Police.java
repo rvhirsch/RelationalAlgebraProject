@@ -1,3 +1,5 @@
+import java.util.Arrays;
+
 public class Police {
 
     public static Boolean spellChecker(String str, DBInfo dbi) {
@@ -32,8 +34,62 @@ public class Police {
         return str.matches("[-+]?\\d*\\.?\\d+");
     }
 
+    public static Boolean isTableNameDup(String tbName, DBInfo dbi) {
+        for (int x = 0; x < dbi.getTBNames().size(); x++) {
+            if (tbName.equalsIgnoreCase(dbi.getTBNames().get(x))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static Boolean isColNameDup(String[] cNames) {
+        for (int x = 0; x < cNames.length-1; x++) {
+            for (int y = x+1; y < cNames.length; y++) {
+//                System.out.println("X" + x + ": " + cNames[x] + ", Y" + y + ": " + cNames[y]);
+                if (cNames[x].equalsIgnoreCase(cNames[y])) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static Boolean checkRowColTypes(String[] stuff, String[] colTypes) {
+        for (int x = 0; x < stuff.length; x++) {
+            switch(colTypes[x].toLowerCase()) {
+                case "varchar":
+                    if (isTextOnly(stuff[x])) {
+                        break;
+                    } else {
+                        return false;
+                    }
+                case "integer":
+                    if (isNumOnly(stuff[x])) {
+                        break;
+                    } else {
+                        return false;
+                    }
+                case "boolean":
+                    if (stuff[x].equalsIgnoreCase("true") || stuff[x].equalsIgnoreCase("false")) {
+                        break;
+                    } else {
+                        return false;
+                    }
+                default:
+                    return false;
+            }
+        }
+        return true;
+    }
+
     public static void main(String[] args) {
-        System.out.println(isTextOnly("Th&*is is a test"));
-        System.out.println(isTextOnlyNoSpace("fiftyfive"));
+//        System.out.println(isTextOnly("Th&*is is a test"));
+//        System.out.println(isTextOnlyNoSpace("fiftyfive"));
+
+        String[] test = {"one","two","three","four","five","six","seven","seven"};
+        System.out.println(isColNameDup(test));
+
+
     }
 }

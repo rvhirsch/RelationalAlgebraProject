@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class DBInfo {
     public class TBInfo {
@@ -18,10 +19,10 @@ public class DBInfo {
             return this.colTypes;
         }
 
-        public TBInfo(String name, String[] colNames) {
+        public TBInfo(String name, String[] colNames, String[] colTypes) {
             this.name = name;
             this.colNames = colNames;
-//            this.colTypes = colTypes;
+            this.colTypes = colTypes;
         }
     }
 
@@ -41,8 +42,8 @@ public class DBInfo {
      * @param name  Table name
      * @param colNames  Column names in Table
      */
-    public void addTable (String name, String[] colNames) {
-        this.tables.add(new TBInfo(name, colNames));
+    public void addTable (String name, String[] colNames, String[] colTypes) {
+        this.tables.add(new TBInfo(name, colNames, colTypes));
         this.extractData();
     }
 
@@ -52,6 +53,24 @@ public class DBInfo {
 
     public ArrayList<String> getColNames() {
         return this.colNames;
+    }
+
+    public ArrayList<String> getColNamesbyTBName(String tbName) {
+        for (int x = 0; x < tables.size(); x++) {
+            if (tbName.equalsIgnoreCase(tables.get(x).getName())) {
+                return new ArrayList<String>(Arrays.asList(tables.get(x).getColNames()));
+            }
+        }
+        return null;
+    }
+
+    public String[] getColTypes(String tbName) {
+        for (int x = 0; x < tables.size(); x++) {
+            if (tbName.equalsIgnoreCase(tables.get(x).getName())) {
+                return tables.get(x).getColTypes();
+            }
+        }
+        return null;
     }
 
     public int getNumOfColOfTable(String tbName) {

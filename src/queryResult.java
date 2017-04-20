@@ -1,10 +1,12 @@
 public class queryResult {
     private String[] columnNames;
+    private String[] colTypes;
     private String[][] data;
     private String name;
 
-    public queryResult (String[] columnNames, Object[][] data){
+    public queryResult (String[] columnNames, String[]  colTypes, Object[][] data){
         this.columnNames = columnNames;
+        this.colTypes = colTypes;
         this.data = format(data);
         this.name = "null";
     }
@@ -27,6 +29,9 @@ public class queryResult {
     }
     public String getName() {
         return this.name;
+    }
+    public String[] getColTypes() {
+        return this.colTypes;
     }
     public void setName(String name) {
         this.name = name;
