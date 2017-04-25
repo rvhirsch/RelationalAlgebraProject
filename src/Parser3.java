@@ -1,3 +1,4 @@
+import java.util.ArrayList;
 import java.util.Arrays;
 
 /**
@@ -25,15 +26,19 @@ public class Parser3 {
 
     private final static String REGEX = "(?=[\\\\({])";
 
+    public static DBInfo info;
+
     private String latex;
     private String[] texArray;
     public String sql;
 
-    public Parser3(String eqn) {
+    public Parser3(String eqn, DBInfo i) {
         this.latex = eqn;
         this.texArray = this.latexToArray();
         this.sql = "";
         this.sql += this.parseArrayToSQL();
+
+        this.info = i;
     }
 
     private String[] latexToArray() {
@@ -86,43 +91,27 @@ public class Parser3 {
 
             }
             else if (curr.contains(NATJOIN)) {
-//                join = curr.substring(NATJOIN.length());
                 this.sql += curr.replace(NATJOIN, " INNER JOIN ");
-//                this.sql += " INNER JOIN " + join;
             }
             else if (curr.contains(INTERSECT)) {
-//                join = curr.substring(INTERSECT.length());
-//                this.sql += " INTERSECT " + join;
                 this.sql += curr.replace(INTERSECT, " INTERSECT ");
             }
             else if (curr.contains(UNION)) {
-//                join = curr.substring(UNION.length());
-//                this.sql += " UNION " + join;
                 this.sql += curr.replace(UNION, " UNION ");
             }
             else if (curr.contains(CROSSJOIN)) {
-//                join = curr.substring(CROSSJOIN.length());
-//                this.sql += " CROSS JOIN " + join;
                 this.sql += curr.replace(CROSSJOIN, " CROSS JOIN ");
             }
             else if (curr.contains(LOJ)) {
-//                join = curr.substring(LOJ.length());
-//                this.sql += " LEFT JOIN " + join;
                 this.sql += curr.replace(LOJ, " LEFT JOIN ");
             }
             else if (curr.contains(ROJ)) {
-//                join = curr.substring(ROJ.length());
-//                this.sql += " RIGHT JOIN " + join;
                 this.sql += curr.replace(ROJ, " RIGHT JOIN ");
             }
             else if (curr.contains(FOJ)) {
-//                join = curr.substring(FOJ.length());
-//                this.sql += " FULL JOIN " + join;
                 this.sql += curr.replace(FOJ, " FULL JOIN ");
             }
             else if (curr.contains(EXCEPT)) {
-//                join = curr.substring(EXCEPT.length());
-//                this.sql += " EXCEPT " + join;
                 this.sql += curr.replace(EXCEPT, " EXCEPT ");
             }
             else {
@@ -143,7 +132,7 @@ public class Parser3 {
         String from = getFrom(i);
         from = from.substring(1, from.length()-1);
 
-        Parser3 psql = new Parser3(from);
+        Parser3 psql = new Parser3(from, info);
         from = psql.sql;
 
         int split = from.split(REGEX).length;
@@ -180,22 +169,17 @@ public class Parser3 {
     }
 
     private int sigma2Select(int i) {
-//        System.out.println("in sig 2 select, i(1) = " + i + ": " + this.texArray[i]);
-
         String where = getCols(i);     // literally same code as getWhere() would have
         i += where.split(REGEX).length + 1;
-//        System.out.println("i(2) = " + i + ": " + this.texArray[i] + "\n");
 
         where = where.replace("||", "OR").replace("&&", "AND").substring(1, where.length()-1);
 
         String from = getFrom(i);
-        Parser3 psql = new Parser3(replaceWords(from));
+        Parser3 psql = new Parser3(replaceWords(from), info);
         from = psql.sql;
         i += from.split(REGEX).length + 1;
 
         this.sql += "SELECT * FROM " + from + " WHERE " + where;
-
-//        System.out.println("i(3) = " + i + ": " + this.texArray[i]);
 
         return i;
     }
@@ -273,6 +257,47 @@ public class Parser3 {
         return p.sql;
     }
 
+    public void fixColNames() {
+        ArrayList<DBInfo.TBInfo> tables = info.getTables();
+        ArrayList<String> tableNames = info.getTBNames();
+
+        ArrayList<String> currNames = new ArrayList<String>();
+        ArrayList<String> colNames, otherNames;
+        String name;
+
+        String[] words = this.sql.split(" ");
+
+        for (int i=0; i<words.length; i++) {
+            name = words[i];
+            if (tableNames.contains(name)) {
+                currNames.add(name);
+
+            }
+        }
+
+        DBInfo.TBInfo table, oldTable;
+        String newColName;
+
+        for (int i=0; i<currNames.size(); i++) {
+            name = currNames.get(i);
+            colNames = this.info.getColNamesbyTBName(name);
+
+            for (String col: colNames) {
+                for (int j=i; j<currNames.size(); j++) {
+                    otherNames = this.info.getColNamesbyTBName(currNames.get(j));
+
+                    if (otherNames.contains(col)) {
+                        // reset cols
+                        newColName = currNames.get(j) + "_" + col;
+                        oldTable = this.info.getTables().get(j);
+                        table = oldTable.resetColName(otherNames.indexOf(col), newColName);
+                        this.info.resetTableCol(oldTable, table);
+                    }
+                }
+            }
+        }
+    }
+
     public static void main(String[] args) {
         String sampleInput1 = "\\Pi_{name}(Person)";
         String sampleInput2 = "\\Pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";
@@ -284,7 +309,7 @@ public class Parser3 {
         // actual test stuff //
         String input = sampleInput2;
 
-        Parser3 p = new Parser3(input);
+        Parser3 p = new Parser3(input, info);
         System.out.println("Latex: " + input);
         System.out.println("Array: " + Arrays.toString(p.latexToArray()));
         System.out.println("SQL: " + p.sql);

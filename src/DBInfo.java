@@ -24,6 +24,11 @@ public class DBInfo {
             this.colNames = colNames;
             this.colTypes = colTypes;
         }
+
+        public TBInfo resetColName(int pos, String newName) {
+            this.colNames[pos] = newName;
+            return this;
+        }
     }
 
     private ArrayList<TBInfo> tables;
@@ -35,6 +40,15 @@ public class DBInfo {
         this.TBNames = new ArrayList<String>();
         this.colNames = new ArrayList<String>();
 
+    }
+
+    public void resetTableCol(TBInfo table, TBInfo newTable) {
+        int pos = this.tables.indexOf(table);
+        this.tables.set(pos, newTable);
+    }
+
+    public ArrayList<TBInfo> getTables() {
+        return this.tables;
     }
 
     /**
