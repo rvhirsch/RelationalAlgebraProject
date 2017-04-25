@@ -120,7 +120,11 @@ public class Parser3 {
             }
         }
 
-        return this.sql.replace("  ", " ");
+        this.sql = this.sql.replace("  ", " ");
+
+        fixColNames();
+
+        return this.sql;
     }
 
     private int piSelect(int i) {
