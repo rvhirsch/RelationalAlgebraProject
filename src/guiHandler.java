@@ -995,7 +995,7 @@ public class guiHandler {
 
 
         //initialize the webview and webengine
-        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/src/webStuff/app/html/EquationEditor.html";
+        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/src/webStuff/app/html/index.html";
         webView.getEngine().load(new File(filePath).toURI().toURL().toExternalForm());
         this.webEngine = webView.getEngine();
     }
