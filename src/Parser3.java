@@ -252,8 +252,8 @@ public class Parser3 {
     }
 
     private String replacePrev(String str) {
-        return str.replace(":", " NATURAL JOIN ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
-                .replace(NATJOIN, " INNER JOIN ").replace(CROSSJOIN, ", ").replace(EXCEPT, "-")
+        return str.replace(":", " , ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
+                .replace(NATJOIN, " INNER JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");
     }
