@@ -507,14 +507,6 @@
         $('#ContentLatex').html(generateLatex(jsonObj.operands.topLevelContainer));
       });
     </script>
-
-    <script>
-        function getLatex() {
-            var latexObj = generateLatex($('.eqEdEquation').data('eqObject').buildJsonObj().operands.topLevelContainer);
-            return latexObj;
-        }
-    </script>
-
     <textarea id="TextJSON"></textarea>
     <br>
     <button id="JSONtoEqEd">Render Equation</button>

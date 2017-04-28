@@ -200,42 +200,88 @@
 
                 <div class="contentDivs" id="operatorWrapper">
                     <ul class="contentList">
+                        <p class="dicks">Selection<br/>Functions</p>
                         <li>
                             <span class="MathJax_MathItalic listElement" id="piButton">&#960;
-                                <span class="toolTipText">Project: <br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et dolor non est sollicitudin laoreet ac nec lorem. Nunc eget augue quis enim vehicula vehicula. Aliquam at ligula metus.  </span>
+                                <span class="toolTipText">Project: <br /> &#960;<sub>col1:col2</sub>(Table)<br />Grabs specified column(s) from db</span>
                             </span>
                         </li>
                         <li>
                             <span class="MathJax_MathItalic listElement" id="sigmaButton">&#963;
-                                <span class="toolTipText">Select: <br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et dolor non est sollicitudin laoreet ac nec lorem. Nunc eget augue quis enim vehicula vehicula. Aliquam at ligula metus.  </span>
+                                <span class="toolTipText">Select: <br /> &#963;<sub>[condition1:condition2]</sub>(Table)<br/>Grabs specified row(s) from db</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="listElement" id="aggButton">&#947;
+                                <span class="toolTipText">Aggregate: <br /> <sub>attr</sub>&#947;<sub>col1:col2</sub>(Table) <br/>Grabs specified column(s) from table </span>
+                            </span>
+                        </li>
+                        <!--<br/>-->
+                    </ul>
+                    <ul class="contentList">
+                        <p class="boobs">Table Manip.<br/>Functions</p>
+                        <li>
+                            <span class="listElement" id="cupButton">&cup;
+                                <span class="toolTipText">Union: <br /> Table1 &cup; Table2 <br/>Combines tables</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="listElement" id="capButton">&cap;
+                                <span class="toolTipText">Intersect: <br /> Table1 &cap; Table2 <br/>Returns intersection of tables</span>
+                            </span>
+                        </li>
+                    </ul>
+                    <br/>
+                    <p class="boobs">Join<br/>Functions</p>
+                    <ul class="contentList">
+                        <li>
+                            <span class="listElement" id="bowtieButton">&#8904;
+                                <span class="toolTipText">Natural Join: <br /> Table1 &#8904; Table2</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="listElement" id="lojButton">&#10197;
+                                <span class="toolTipText">Left Outer Join: <br /> Table1 &#10197; Table2</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="listElement" id="rojButton">&#10198;
+                                <span class="toolTipText">Right Outer Join: <br /> Table1 &#10198; Table2</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="listElement" id="fojButton">&#10199;
+                                <span class="toolTipText">Full Outer Join: <br /> Table1 &#10197; Table2</span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="MathJax_MathItalic listElement" id="timesButton">&#215;
+                                <span class="toolTipText">Cross Join: <br /> Table 1 &#2715; Table2</span>
                             </span>
                         </li>
                     </ul>
 
                     <ul class="contentList">
-                        <li>
-                            <span class="MathJax_Main listElement" id="maxButton">max
-                                <span class="toolTipText">Maximum: <br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et dolor non est sollicitudin laoreet ac nec lorem. Nunc eget augue quis enim vehicula vehicula. Aliquam at ligula metus.  </span>
-                            </span>
-                        </li>
-
+                        <p class="yomommuh">Aggregation<br/>Functions</p>
                         <li>
                             <span class="MathJax_Main listElement" id="minButton">min
-                                <span class="toolTipText">Minimum: <br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et dolor non est sollicitudin laoreet ac nec lorem. Nunc eget augue quis enim vehicula vehicula. Aliquam at ligula metus.  </span>
+                                <span class="toolTipText">Minimum: <br /> min(attr)</span>
                             </span>
                         </li>
-                    </ul>
-
-                    <ul class="contentList">
                         <li>
-                            <span class="MathJax_Main listElement" id="renameButton">rename
-                                <span class="toolTipText">Rename: <br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et dolor non est sollicitudin laoreet ac nec lorem. Nunc eget augue quis enim vehicula vehicula. Aliquam at ligula metus.  </span>
+                            <span class="MathJax_Main listElement" id="maxButton">max
+                                <span class="toolTipText">Maximum: <br /> max(attr)</span>
                             </span>
                         </li>
-
                         <li>
                             <span class="MathJax_Main listElement" id="avgButton">avg
-                                <span class="toolTipText">Average: <br />Lorem ipsum dolor sit amet, consectetur adipiscing elit. Etiam et dolor non est sollicitudin laoreet ac nec lorem. Nunc eget augue quis enim vehicula vehicula. Aliquam at ligula metus.  </span>
+                                <span class="toolTipText">Average: <br /> avg(attr)</span>
+                            </span>
+                        </li>
+                        <br/>
+                        <li>
+                            <span class="listElement" id="rhoButton">&#961;
+                                <span class="toolTipText">Rename: <br /> &#961;<sub>table(a1, a2)</sub></span>
                             </span>
                         </li>
                     </ul>
@@ -243,28 +289,56 @@
                 </div>
 
                 <div class="contentDivs" id="symbolWrapper">
+                    <p class="boobs">Aggregation <br/>(cont.)</p>
                     <ul class="contentList">
                         <li>
-                            <span class="MathJax_Main listElement" id="lessThanOrEqualToButton">&#x2264;
-                                <span class="toolTipText">Test</span>
+                            <span class="MathJax_Main listElement" id="greaterThanButton">>
+                                <span class="toolTipText">Greater Than: <br/></span>
                             </span>
                         </li>
-
                         <li>
-                            <span class="MathJax_Main listElement" id="greaterThanOrEqualToButton">&#x2265;
-                                <span class="toolTipText">Test</span>
+                            <span class="MathJax_Main listElement" id="greaterThanOrEqualToButton">&#x2264;
+                                <span class="toolTipText">Greater Than or Equal To: <br/></span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="MathJax_Main listElement" id="lessThanButton"><
+                                <span class="toolTipText">Less Than: <br/></span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="MathJax_Main listElement" id="lessThanOrEqualToButton">&#x2265;
+                                <span class="toolTipText">Less Than or Equal To: <br/></span>
                             </span>
                         </li>
                     </ul>
-                </div>
-
-                <div class="contentDivs" id="formatWrapper">
                     <ul class="contentList">
+                        <p class="boobs">Logic <br/>Functions</p>
                         <li>
-                            <img class="listElement" id="subscriptButton" src="../../MenuImages/png/subscript.png">
+                            <span class="MathJax_MathItalic listElement" id="veeButton">and
+                                <span class="toolTipText">And: <br/> </span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="MathJax_MathItalic listElement" id="wedgeButton">or
+                                <span class="toolTipText">Or: <br/></span>
+                            </span>
+                        </li>
+                        <li>
+                            <span class="MathJax_MainItalic listElement" id="exceptButton">&#2014;
+                                <span class="toolTipText">Except: <br/></span>
+                            </span>
+                        </li>
+                        <p class="boobs">Formating <br/>Functions</p>
+                        <li>
+                            <img class="listElementImg" id="subscriptButton" src="../../MenuImages/png/subscript.png">
+                            <span class="toolTipText">Subscript: <br/></span>
+                        </li>
+                        <li>
+                            <img class="listElementImg" id="parenthesesBracketPairButton" src="../../MenuImages/png/parenthesesBracketPair.png">
+                            <span class="toolTipText">Paranthesis: <br/></span>
                         </li>
                     </ul>
-
                 </div>
             </div>
         </div>
@@ -275,17 +349,6 @@
         function getLatex() {
             var latexObj = generateLatex($('.eqEdEquation').data('eqObject').buildJsonObj().operands.topLevelContainer);
             return latexObj;
-        }
-    </script>
-
-    <script language="javascript">
-        function addName() {
-            var ol = document.getElementById("names");
-            var li = document.createElement("li");
-            li.appendChild(document.createTextNode("Four"));
-            li.setAttribute("id", "element4"); // added line
-            ul.appendChild(li);
-            alert(li.id);
         }
     </script>
 </body>
