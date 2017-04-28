@@ -9,7 +9,7 @@ public class Parser3 {
     private final static String PI = "\\Pi_";
     private final static String SIGMA1 = "\\sigma";
     private final static String SIGMA2 = "\\sigma_";
-    private final static String AGGR = "\\G_";                // TODO
+    private final static String AGGR = "\\gamma_";                // TODO
     private final static String NATJOIN = "\\bowtie";
     private final static String CROSSJOIN = "\\times";
     private final static String UNION = "\\cup";
@@ -48,44 +48,31 @@ public class Parser3 {
     }
 
     private String parseArrayToSQL() {
-        String curr, cols, from, where, join, group;
+        String curr, cols, from, where, join;
+        String group = "";
         Parser3 psql;
 
         for (int i=0; i<this.texArray.length; i++) {
             curr = this.texArray[i];
-//            if (curr.equals("_")) {
-//                // TODO
-//                group = getGroup(i);
-//                // this.texArray[i] += group;
-//                i++;
-//
-//                if (this.texArray[i].contains(AGGR)) {
-//
-//                }
-//                else if (this.texArray[i].contains(PI)) {
-//
-//                }
-//                else if (this.texArray[i].contains(SIGMA1)) {
-//
-//                }
-//                else if (this.texArray[i].contains(SIGMA2)) {
-//
-//                }
-//
-//            }
-//            else if (curr.contains(AGGR)) {
-//                System.out.println("IN AGGR");
-//
-//                // TODO
-//            }
-            if (curr.equals(PI)) {
-                i = piSelect(i);
+
+//            System.out.println("curr: " + curr);
+
+            if (curr.equals("_")) {     // group in next spot(s) in array
+                group = getCols(i);     // same code as what getGroup() would have
+                group = group.replace("{", "").replace("}", "");
+
+                // this.texArray[i] += group;
+                int split = group.split(REGEX).length;
+                i += split;
+            }
+            else if (curr.equals(PI) || curr.equals(AGGR)) {
+                i = piSelect(i, group);
             }
             else if (curr.equals(SIGMA1)) {
-                i = sigma1Select(i);
+                i = sigma1Select(i, group);
             }
             else if (curr.equals(SIGMA2)) {
-                i = sigma2Select(i);
+                i = sigma2Select(i, group);
             }
             else if (curr.equals(AGGR)) {
 
@@ -122,14 +109,14 @@ public class Parser3 {
 
         this.sql = this.sql.replace("  ", " ");
 
-        fixColNames();
+//        fixColNames();
 
         return this.sql;
     }
 
-    private int piSelect(int i) {
+    private int piSelect(int i, String group) {
         String cols = getCols(i);
-        cols = cols.substring(1, cols.length() - 1);
+        cols = cols.replace("{", "").replace("}", "");
 
         i += cols.split(REGEX).length + 1;
 
@@ -150,10 +137,14 @@ public class Parser3 {
             this.sql += "SELECT " + cols + " FROM " + from;
         }
 
+        if (group.length() > 0) {
+            this.sql += " GROUP BY " + group;
+        }
+
         return i;
     }
 
-    private int sigma1Select(int i) {
+    private int sigma1Select(int i, String group) {
         String from = getFrom(i+1);
         from = from.substring(1, from.length()-1);
 
@@ -169,10 +160,14 @@ public class Parser3 {
             this.sql += "SELECT * FROM " + from;
         }
 
+        if (group.length() > 0) {
+            this.sql += " GROUP BY " + group;
+        }
+
         return i;
     }
 
-    private int sigma2Select(int i) {
+    private int sigma2Select(int i, String group) {
         String where = getCols(i);     // literally same code as getWhere() would have
         i += where.split(REGEX).length + 1;
 
@@ -185,18 +180,11 @@ public class Parser3 {
 
         this.sql += "SELECT * FROM " + from + " WHERE " + where;
 
-        return i;
-    }
-
-    private String getGroup(int pos) {
-        String grp = "";
-        String phrase = this.texArray[pos+1];
-        char[] arr = phrase.toCharArray();
-        int i = 0;
-        while (arr[i] != '}') {
-            grp += arr[i];
+        if (group.length() > 0) {
+            this.sql += " GROUP BY " + group;
         }
-        return grp;
+
+        return i;
     }
 
     private String getFrom(int pos) {
@@ -240,7 +228,7 @@ public class Parser3 {
     }
 
     private String replacePrev(String str) {
-        return str.replace(":", " , ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
+        return str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
                 .replace(NATJOIN, " INNER JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");
@@ -306,12 +294,13 @@ public class Parser3 {
         String sampleInput1 = "\\Pi_{name}(Person)";
         String sampleInput2 = "\\Pi_{name, age}(\\sigma_{age > 16}(Person \\bowtie Eats))";
         String sampleInput3 = "\\sigma_{age > 10 || name == 'sally'}(Person \\bowtie Eats)";
-        String sampleInput4 = "_{age, name}\\G_{max(age), name} (Person \\bowtie Eats)";
+        String sampleInput4 = "_{age, name}\\gamma_{max(age), name} (Person \\bowtie Eats)";
         String sampleInput5 = "\\Pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";
         String sampleInput6 = "\\sigma(Person)";
+        String sampleInput7 = "_{age}\\Pi_{name}(Person)";
 
         // actual test stuff //
-        String input = sampleInput2;
+        String input = sampleInput7;
 
         Parser3 p = new Parser3(input, info);
         System.out.println("Latex: " + input);
