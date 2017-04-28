@@ -7,20 +7,19 @@
 <?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<GridPane alignment="CENTER" hgap="2.0" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" vgap="2.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="guiHandler">
+<GridPane alignment="CENTER" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="guiHandler">
   <columnConstraints>
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="750.0" minWidth="10.0" prefWidth="350.0" />
     <ColumnConstraints hgrow="SOMETIMES" maxWidth="646.0" minWidth="0.0" prefWidth="350.0" />
       <ColumnConstraints hgrow="SOMETIMES" maxWidth="622.0" minWidth="10.0" prefWidth="570.0" />
   </columnConstraints>
   <rowConstraints>
-      <RowConstraints maxHeight="634.0" minHeight="0.0" prefHeight="20.0" vgrow="SOMETIMES" />
       <RowConstraints maxHeight="634.0" minHeight="5.0" prefHeight="329.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="693.0" minHeight="0.0" prefHeight="286.0" vgrow="SOMETIMES" />
     <RowConstraints maxHeight="386.0" minHeight="10.0" prefHeight="165.0" vgrow="SOMETIMES" />
   </rowConstraints>
    <children>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="1" GridPane.rowSpan="2" GridPane.vgrow="ALWAYS">
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.hgrow="ALWAYS" GridPane.rowSpan="2" GridPane.vgrow="ALWAYS">
          <children>
             <TabPane fx:id="dbTabPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" GridPane.rowIndex="1" GridPane.rowSpan="2" VBox.vgrow="ALWAYS">
                <GridPane.margin>
@@ -36,7 +35,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </VBox>
-      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="100.0" spacing="5.0" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
          <children>
             <HBox prefHeight="0.0" prefWidth="407.0" spacing="5.0">
                <children>
@@ -62,7 +61,7 @@
                   <Insets />
                </VBox.margin>
                <children>
-                  <Button fx:id="saveEQButton" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Save Eq. Picture" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="saveEQButton" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#getEqImg" text="Save Eq. Picture" HBox.hgrow="ALWAYS" />
                   <Button fx:id="saveResultButton" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Save Results" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
@@ -71,7 +70,7 @@
                   <Insets />
                </VBox.margin>
                <children>
-                  <Button fx:id="saveEQSource" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Save Eq. Source" HBox.hgrow="ALWAYS" />
+                  <Button fx:id="saveDBSource" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" text="Save DB Source" HBox.hgrow="ALWAYS" />
                   <Button fx:id="saveLogButton" maxHeight="-Infinity" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#saveLogButton" text="Save Log" HBox.hgrow="ALWAYS" />
                </children>
             </HBox>
@@ -83,7 +82,7 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </VBox>
-      <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="3" GridPane.vgrow="ALWAYS">
+      <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowIndex="2" GridPane.vgrow="ALWAYS">
          <content>
             <TextArea fx:id="logTextArea" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="244.0" prefWidth="350.0" promptText="Program Log:" wrapText="true" />
          </content>
@@ -91,47 +90,8 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </GridPane.margin>
       </ScrollPane>
-      <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowIndex="1" GridPane.rowSpan="2" />
-      <MenuBar maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" GridPane.columnSpan="3">
-        <menus>
-          <Menu mnemonicParsing="false" text="File">
-            <items>
-                  <MenuItem fx:id="menuItemExit" mnemonicParsing="false" onAction="#MenuItemExit" text="Exit" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Database">
-            <items>
-              <MenuItem fx:id="menuItemLoadDBFile" mnemonicParsing="false" onAction="#MenuItemLoadDBFile" text="Load DB File" />
-                  <MenuItem fx:id="menuItemPopDB" mnemonicParsing="false" onAction="#MenuItemPopDB" text="Populate DB" />
-                  <MenuItem fx:id="menuItemClearDB" mnemonicParsing="false" text="Clear DB" />
-            </items>
-          </Menu>
-            <Menu mnemonicParsing="false" text="View">
-              <items>
-                <MenuItem fx:id="menuItemLatexSrc" mnemonicParsing="false" text="LaTeX Source" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Save">
-              <items>
-                <MenuItem fx:id="menuItemDBDump" mnemonicParsing="false" text="Database Dump" />
-                  <MenuItem fx:id="menuItemLog" mnemonicParsing="false" text="Log" />
-                  <MenuItem fx:id="menuItemEqSrc" mnemonicParsing="false" text="Equation SRC" />
-                  <MenuItem fx:id="menuItemEqPic" mnemonicParsing="false" text="Equation Pic" />
-                  <MenuItem fx:id="menuItemLatexSrc2" mnemonicParsing="false" text="LaTeX SRC" />
-              </items>
-            </Menu>
-            <Menu mnemonicParsing="false" text="Help">
-              <items>
-                <MenuItem fx:id="menuItemAbout" mnemonicParsing="false" text="About" />
-                  <MenuItem fx:id="menuItemHelpPages" mnemonicParsing="false" text="Help Pages" />
-              </items>
-            </Menu>
-        </menus>
-         <GridPane.margin>
-            <Insets bottom="5.0" top="5.0" />
-         </GridPane.margin>
-      </MenuBar>
-      <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="3">
+      <WebView fx:id="webView" prefHeight="200.0" prefWidth="200.0" GridPane.columnIndex="2" GridPane.rowSpan="2" />
+      <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0" spacing="5.0" GridPane.columnIndex="2" GridPane.rowIndex="2">
          <children>
             <ScrollPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="155.0" prefWidth="287.0">
                <content>
@@ -141,7 +101,7 @@
                   <Insets />
                </HBox.margin>
             </ScrollPane>
-            <Button fx:id="getLatexSrcButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" prefHeight="112.0" prefWidth="99.0" text="Get LaTeX Source" wrapText="true" />
+            <Button fx:id="getLatexSrcButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getLatexSrc" prefHeight="112.0" prefWidth="99.0" text="Get LaTeX Source" wrapText="true" />
             <VBox alignment="TOP_RIGHT" prefHeight="113.0" prefWidth="60.0" spacing="5.0">
                <children>
                   <Button fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="160.0" text="Clear" />
@@ -162,9 +122,14 @@
             <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
          </padding>
       </HBox>
-      <TabPane fx:id="tabResultPane" prefHeight="200.0" prefWidth="200.0" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.rowIndex="1" />
+      <VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" spacing="5.0" GridPane.columnIndex="1" GridPane.hgrow="ALWAYS" GridPane.rowSpan="2" GridPane.vgrow="ALWAYS">
+         <children>
+            <TabPane fx:id="tabResultPane" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" tabClosingPolicy="UNAVAILABLE" GridPane.columnIndex="1" GridPane.rowIndex="1" GridPane.rowSpan="2" VBox.vgrow="ALWAYS" />
+            <Button fx:id="clearTabButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#clearResultTabButton" text="Clear Tabs" />
+         </children>
+         <padding>
+            <Insets bottom="5.0" left="5.0" right="5.0" top="5.0" />
+         </padding>
+      </VBox>
    </children>
-   <padding>
-      <Insets bottom="2.0" left="2.0" right="2.0" top="2.0" />
-   </padding>
 </GridPane>

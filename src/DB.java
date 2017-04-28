@@ -1,3 +1,5 @@
+import org.h2.jdbc.JdbcPreparedStatement;
+
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
@@ -357,6 +359,19 @@ public class DB {
         return toReturn;
     }
 
+    public String qrToString(queryResult qr) throws SQLException {
+        String str = "";
+
+        //columns
+        for (int x = 0; x < qr.getData().length; x++) {
+            for (int y = 0; y < qr.getData()[x].length; y++) {
+                str += qr.getData()[x][y] + " ";
+            }
+            str += "\n";
+        }
+        return str;
+    }
+
     /**
      * Your typical toString method, doesn't print anything fancy, just plain text representing the database
      * @return  -   A string representing the database
@@ -465,9 +480,8 @@ public class DB {
         return true;
     }
 
-
     public static void main(String[] args) throws Exception {
-        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/files/SimpleInput";
+        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/files/SimpleInput.txt";
         DB db = new DB();
         db.populateDatabase(filePath);
         System.out.println(db.toString());

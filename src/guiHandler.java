@@ -4,13 +4,16 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
+import javafx.scene.SnapshotParameters;
 import javafx.scene.control.*;
 import javafx.scene.control.TableColumn;
+import javafx.scene.image.WritableImage;
 import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
@@ -24,7 +27,10 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Callback;
 
+import javax.imageio.ImageIO;
+import java.awt.image.RenderedImage;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.SQLException;
@@ -39,6 +45,7 @@ public class guiHandler {
 
     private DB db;
     private DBInfo dbInfo;
+    private queryResult curQR;
 
     private ObservableList<String> addTableColumnOptions;
     private ArrayList<String> tableNameOptions;
@@ -117,6 +124,7 @@ public class guiHandler {
     @FXML private TextArea latexSourceTextArea;
 
     @FXML private Button clearButton;
+    @FXML private Button clearTabButton;
     @FXML private Button executeButton;
     @FXML private Button populateDBButton;
     @FXML private Button getLatexSrcButton;
@@ -125,20 +133,8 @@ public class guiHandler {
     @FXML private Button crossJoinCalcButton;
     @FXML private Button addTableButton;
     @FXML private Button editDBButton;
-
-    @FXML private MenuItem menuItemAbout;
-    @FXML private MenuItem menuItemClearDB;
-    @FXML private MenuItem MenuItemDBDump;
-    @FXML private MenuItem menuItemEqPic;
-    @FXML private MenuItem menuItemEqSrc;
-    @FXML private MenuItem menuItemExit;
-    @FXML private MenuItem menuItemHelpPages;
-    @FXML private MenuItem menuItemLatexSrc;
-    @FXML private MenuItem menuItemLatexSrc2;
-    @FXML private MenuItem menuItemLoadDBFile;
-    @FXML private MenuItem menuItemLog;
-    @FXML private MenuItem menuItemNew;
-    @FXML private MenuItem menuItemPopDB;
+    @FXML private Button saveDBSource;
+    @FXML private Button saveResultButton;
 
 
 
@@ -209,7 +205,7 @@ public class guiHandler {
         editDBAddTableDefHbox.getChildren().addAll(editDBAddTableDefLabel1, editDBAddTAbleDefTextField, editDBAddTableDefComboBox);
         editDBAddTableFlowPane.getChildren().addAll(editDBAddTableOptionsHbox, editDBAddTableDefHbox);
 
-        editDBAddTableDefLabel1.setPrefWidth(50);
+        editDBAddTableDefLabel1.setPrefWidth(55);
         editDBAddTableDefLabel1.setTextAlignment(TextAlignment.CENTER);
         editDBAddTableDefLabel1.setAlignment(Pos.CENTER);
 
@@ -251,7 +247,7 @@ public class guiHandler {
 
                 TextField editDBAddTableTempTextField = new TextField();
                 Label editDBAddTableTempLabel1 = new Label("Col " + newValue + ": ");
-                editDBAddTableTempLabel1.setPrefWidth(40);
+                editDBAddTableTempLabel1.setPrefWidth(55);
                 editDBAddTableTempLabel1.setTextAlignment(TextAlignment.CENTER);
                 editDBAddTableTempLabel1.setAlignment(Pos.CENTER);
 
@@ -755,22 +751,9 @@ public class guiHandler {
 
     private void setResultTable(queryResult qr) throws Exception {
         if (qr == null) {
-            TableView tableView = new TableView();
-
-            TableColumn tabCol = new TableColumn("Ipsum");
-            TableColumn tabCol2 = new TableColumn("Dolar");
-            TableColumn tabCol3 = new TableColumn("Sit");
-            TableColumn tabCol4 = new TableColumn("Amet");
-            tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
-
-            Tab tab = new Tab("Lorem");
-            tab.setContent(tableView);
-
-            tabResultPane.getTabs().add(tab);
-
         } else {
             TableView<String[]> table = new TableView<>();
-            table.setEditable(true);
+            table.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
             if (qr != null) {
                 String[][] dataArray = qr.getData();
@@ -796,8 +779,14 @@ public class guiHandler {
             }
             resultTableView = table;
 
+            if (tabResultPane.getTabs() != null) {
+                if (tabResultPane.getTabs().get(0).getText().equalsIgnoreCase("Lorem")) {
+                    tabResultPane.getTabs().remove(0);
+                }
+            }
+
             String num = "";
-            switch (tabResultPane.getTabs().size()) {
+            switch (tabResultPane.getTabs().size()+1) {
                 case(1):
                     num = "One";
                     break;
@@ -843,20 +832,20 @@ public class guiHandler {
                 case(15):
                     num = "Fifteen";
                     break;
+                default:
+                    num = Integer.toString(tabResultPane.getTabs().size());
             }
 
             Tab tab = new Tab(num);
             tab.setContent(resultTableView);
 
-            if (tabResultPane.getTabs().get(0).getText().equalsIgnoreCase("Lorem")) {
-                tabResultPane.getTabs().remove(0);
-            }
-
             if (tabResultPane.getTabs().size() >= 15) {
-                tabResultPane.getTabs().remove(15,tabResultPane.getTabs().size());
+                tabResultPane.getTabs().remove(tabResultPane.getTabs().size()-1);
             }
 
             tabResultPane.getTabs().add(tab);
+            tabResultPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
+            tabResultPane.getTabs().get(0).setClosable(false);
         }
     }
 
@@ -986,18 +975,34 @@ public class guiHandler {
         this.db = new DB();
         this.dbInfo = new DBInfo();
         setDBTabPane();
-        setResultTable(null);
 
         tableNameOptions = new ArrayList<String>();
         tableNameOptionsFX = FXCollections.observableArrayList();
+
+        latexSourceTextArea.setWrapText(true);
 
        populateDBButton.disableProperty().bind(Bindings.isEmpty(dbFileField.textProperty()));
 
 
         //initialize the webview and webengine
-        String filePath = "/home/josh/Documents/Capstone/RelationalAlgebraProject/src/webStuff/app/html/index.html";
+        String filePath = "./src/webStuff/app/html/index.html";
         webView.getEngine().load(new File(filePath).toURI().toURL().toExternalForm());
         this.webEngine = webView.getEngine();
+
+        TableView tableView = new TableView();
+
+        TableColumn tabCol = new TableColumn("Ipsum");
+        TableColumn tabCol2 = new TableColumn("Dolar");
+        TableColumn tabCol3 = new TableColumn("Sit");
+        TableColumn tabCol4 = new TableColumn("Amet");
+        tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
+
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
+        Tab tab = new Tab("Lorem");
+        tab.setContent(tableView);
+
+        tabResultPane.getTabs().add(tab);
     }
 
     @FXML private void populateDatabaseButton() throws IOException{
@@ -1062,20 +1067,42 @@ public class guiHandler {
         }
     }
 
+    @FXML private void clearResultTabButton() {
+        tabResultPane.getTabs().remove(0,tabResultPane.getTabs().size());
+
+        TableView tableView = new TableView();
+
+        TableColumn tabCol = new TableColumn("Ipsum");
+        TableColumn tabCol2 = new TableColumn("Dolar");
+        TableColumn tabCol3 = new TableColumn("Sit");
+        TableColumn tabCol4 = new TableColumn("Amet");
+        tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
+
+        tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
+
+        Tab tab = new Tab("Lorem");
+        tab.setContent(tableView);
+
+        tabResultPane.getTabs().add(tab);
+    }
+
     @FXML private void executeButton() throws Exception {
-//        System.out.println(webEngine.executeScript("getLatex()"));
-//        String ls = (String)webEngine.executeScript("getLatex()");
+        System.out.println(webEngine.executeScript("getLatex()"));
+        String ls = (String)webEngine.executeScript("getLatex()");
 
-//        ls = ls.replace("\\left(","(");
-//        ls = ls.replace("\\right)",")");
+        ls = ls.replace("\\left(","(");
+        ls = ls.replace("\\right)",")");
 
-//        Parser3 p = new Parser3(ls);
-//        String temp = p.sql;
+        Parser3 p = new Parser3(ls, dbInfo);
+        String temp = p.sql;
 //        System.out.println("temp: " + temp);
 
-        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person NATURAL JOIN Eats) WHERE pizza='cheese' AND money<100)";
-        setResultTable(db.query(sampleQuery));
-//        setResultTable(db.query(temp));
+//        String sampleQuery2 = "SELECT * FROM Person";
+//        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person CROSS JOIN Eats) WHERE pizza='cheese' AND money<100)";
+//        curQR = db.query(temp);
+//        setResultTable(db.query(sampleQuery2));
+//        System.out.println(db.qrToString(db.query(sampleQuery2)));
+        setResultTable(curQR);
     }
 
     @FXML private void openEditDBWindowButton() throws Exception{
@@ -1084,64 +1111,52 @@ public class guiHandler {
         editDBStage.showAndWait();
    }
 
-    @FXML private void MenuItemExit() {
-        Stage stage = (Stage) tabResultPane.getScene().getWindow();
-        stage.close();
-    }
+   @FXML private void getLatexSrc() {
+       String ls = (String)webEngine.executeScript("getLatex()");
+//       System.out.println(ls);
+       latexSourceTextArea.setText(ls);
+   }
 
-    @FXML private void MenuItemLoadDBFile() {
-        this.loadDBButton();
-    }
+   @FXML private void getEqImg() throws IOException {
+       FileChooser fc = new FileChooser();
+       fc.setTitle("Choose File To Save Log To:");
+       FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("PNG Files","png");
+       fc.setSelectedExtensionFilter(filter);
+       File file = fc.showSaveDialog(dbTabPane.getScene().getWindow());
 
-    @FXML private void MenuItemPopDB() {
-        if (!dbFileField.getText().equalsIgnoreCase("")) {
-            try {
-                this.populateDatabaseButton();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            popupMaker("Check your shit");
-        }
-    }
+        WritableImage snapshot = webView.snapshot(new SnapshotParameters(), null);
+        RenderedImage renderedImage = SwingFXUtils.fromFXImage(snapshot, null);
 
-    @FXML private void MenuItemClearDB() {
-        try {
-            this.clearDBButton();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
+        ImageIO.write(renderedImage, "png", file);
+   }
 
-    @FXML private void MenuItemLatexSrc() {
+   @FXML private void saveDBSrc() throws FileNotFoundException {
+        String str = db.toString();
 
-    }
+       FileChooser fc = new FileChooser();
+       fc.setTitle("Choose File To Save Log To:");
+       FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files","txt");
+       fc.setSelectedExtensionFilter(filter);
+       File file = fc.showSaveDialog(dbTabPane.getScene().getWindow());
 
-    @FXML private void MenuItemDBDump() {
+       if (file != null) {
+           PrintWriter writer = new PrintWriter(file.getAbsolutePath());
+           writer.print(str);
+           writer.close();
+       }
+   }
 
-    }
+   @FXML private void saveResult() throws FileNotFoundException, SQLException {
+       FileChooser fc = new FileChooser();
+       fc.setTitle("Choose File To Save Log To:");
+       FileChooser.ExtensionFilter filter = new FileChooser.ExtensionFilter("Text Files","txt");
+       fc.setSelectedExtensionFilter(filter);
+       File file = fc.showSaveDialog(dbTabPane.getScene().getWindow());
 
-    @FXML private void MenuItemLog() {
-
-    }
-
-    @FXML private void MenuItemEqSrc() {
-
-    }
-
-    @FXML private void MenuItemEqPic() {
-
-    }
-
-    @FXML private void MenuItemLatexSrc2() {
-
-    }
-
-    @FXML private void MenuItemAbout() {
-
-    }
-
-    @FXML private void MenuItemHelpPages() {
-
-    }
+       if (file != null) {
+           PrintWriter writer = new PrintWriter(file.getAbsolutePath());
+           writer.print(db.qrToString(curQR));
+           writer.close();
+       }
+   }
 }
