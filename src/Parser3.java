@@ -9,7 +9,7 @@ public class Parser3 {
     private final static String PI = "\\Pi_";
     private final static String SIGMA1 = "\\sigma";
     private final static String SIGMA2 = "\\sigma_";
-    private final static String AGGR = "\\gamma_";                // TODO
+    private final static String AGGR = "\\gamma_";
     private final static String NATJOIN = "\\bowtie";
     private final static String CROSSJOIN = "\\times";
     private final static String UNION = "\\cup";
@@ -57,7 +57,7 @@ public class Parser3 {
 
 //            System.out.println("curr: " + curr);
 
-            if (curr.equals("_")) {     // group in next spot(s) in array
+            if (curr.equals("_") || curr.equals("(_")) {     // group in next spot(s) in array
                 group = getCols(i);     // same code as what getGroup() would have
                 group = group.replace("{", "").replace("}", "");
 

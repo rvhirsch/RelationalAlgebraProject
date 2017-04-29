@@ -46,8 +46,22 @@
 }
 
 #operatorWrapper {
-    width: 52vw;
+    width: 91vw;
     align: center;
+}
+
+table {
+    width: 91vw;
+    align: center;
+    font-size: 3.5vw;
+}
+
+th {
+    border-bottom: 2px solid black;
+}
+
+td {
+    border-right: 1px solid black;
 }
 
 #symbolWrapper {
@@ -158,6 +172,9 @@
 
 }
 
+#timesButton {
+    font-family: DejaVu Serif;
+}
 
 .fontTest {
     visibility: hidden;
