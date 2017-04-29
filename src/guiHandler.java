@@ -1087,21 +1087,24 @@ public class guiHandler {
     }
 
     @FXML private void executeButton() throws Exception {
-        System.out.println(webEngine.executeScript("getLatex()"));
+//        System.out.println(webEngine.executeScript("getLatex()"));
         String ls = (String)webEngine.executeScript("getLatex()");
-
         ls = ls.replace("\\left(","(");
         ls = ls.replace("\\right)",")");
+        ls = ls.replace(".","'");
+
+//        System.out.println("ls: " + ls);
 
         Parser3 p = new Parser3(ls, dbInfo);
+
         String temp = p.sql;
-//        System.out.println("temp: " + temp);
+        System.out.println("temp: " + temp);
 
 //        String sampleQuery2 = "SELECT * FROM Person";
-//        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person CROSS JOIN Eats) WHERE pizza='cheese' AND money<100)";
-//        curQR = db.query(temp);
-//        setResultTable(db.query(sampleQuery2));
-//        System.out.println(db.qrToString(db.query(sampleQuery2)));
+//        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person NATURAL JOIN Eats) WHERE pizza='cheese' AND money<100)";
+        curQR = db.query(temp);
+//        setResultTable(db.query(sampleQuery));
+//        System.out.println(db.qrToString(db.query(sampleQuery)));
         setResultTable(curQR);
     }
 

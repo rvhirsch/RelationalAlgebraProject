@@ -6,7 +6,7 @@ import java.util.Arrays;
  */
 public class Parser3 {
     // all possible commands - I hope...
-    private final static String PI = "\\Pi_";
+    private final static String PI = "\\pi_";
     private final static String SIGMA1 = "\\sigma";
     private final static String SIGMA2 = "\\sigma_";
     private final static String AGGR = "\\gamma_";
@@ -78,7 +78,7 @@ public class Parser3 {
 
             }
             else if (curr.contains(NATJOIN)) {
-                this.sql += curr.replace(NATJOIN, " INNER JOIN ");
+                this.sql += curr.replace(NATJOIN, " NATURAL JOIN ");
             }
             else if (curr.contains(INTERSECT)) {
                 this.sql += curr.replace(INTERSECT, " INTERSECT ");
@@ -229,7 +229,7 @@ public class Parser3 {
 
     private String replacePrev(String str) {
         return str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
-                .replace(NATJOIN, " INNER JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
+                .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");
     }
@@ -298,9 +298,10 @@ public class Parser3 {
         String sampleInput5 = "\\Pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";
         String sampleInput6 = "\\sigma(Person)";
         String sampleInput7 = "_{age}\\Pi_{name}(Person)";
+        String sampleInput8 = "\\pi_{name}(Person)";
 
         // actual test stuff //
-        String input = sampleInput7;
+        String input = sampleInput5;
 
         Parser3 p = new Parser3(input, info);
         System.out.println("Latex: " + input);

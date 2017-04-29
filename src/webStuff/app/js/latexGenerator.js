@@ -112,7 +112,7 @@ var generateLatex = function(expr) {
 var symbolToLatex = function(expr) {
 	var latexString = '';
 	var symbolToLatexMapping = {
-		'∂': '\\partial',
+		'⋈': '\\partial',
 		'∞': '\\infty',
 		'Γ': '\\Gamma',
 		'Δ': '\\Delta',
@@ -155,6 +155,7 @@ var symbolToLatex = function(expr) {
 		'ψ': '\\psi',
 		'ω': '\\omega',
 		'ı': '\\imath',
+		'⋈': '\\bowtie',
 		'ȷ': '\\jmath'
 	}
 	if (typeof symbolToLatexMapping[expr.value] === 'undefined') {
@@ -251,6 +252,7 @@ var operatorToLatex = function(expr) {
 		'∥': '\\parallel',
 		':': ':',
 		'÷': '\\div',
+		'⋈': '\\bowtie',
 		'⋅': '\\cdot',
 		'=': '='
 	};

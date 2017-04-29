@@ -41,6 +41,7 @@
 }
 
 .listElementImg {
+    float: left;
     height: 4vw;
     width: 4vw;
 }
@@ -51,7 +52,7 @@
 }
 
 table {
-    width: 91vw;
+    width: 80vw;
     align: center;
     font-size: 3.5vw;
 }
