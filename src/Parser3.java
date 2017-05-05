@@ -14,7 +14,7 @@ public class Parser3 {
     private final static String CROSSJOIN = "\\times";
     private final static String UNION = "\\cup";
     private final static String INTERSECT = "\\cap";
-    private final static String RENAME = "\\rho";             // TODO
+//    private final static String RENAME = "\\rho";             // TODO
     private final static String AND1 = "\\vee";
     private final static String AND2 = "\\land";
     private final static String OR1 = "\\wedge";
@@ -23,6 +23,9 @@ public class Parser3 {
     private final static String LOJ = "\\leftouterjoin";
     private final static String ROJ = "\\rightouterjoin";
     private final static String FOJ = "\\fullouterjoin";
+    private final static String GEQ = "\\geq";
+    private final static String LEQ = "\\leq";
+
 
     private final static String REGEX = "(?=[\\\\({])";
 
@@ -229,6 +232,7 @@ public class Parser3 {
 
     private String replacePrev(String str) {
         return str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
+                .replace(LEQ, "<=").replace(GEQ, ">=")
                 .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");
@@ -236,10 +240,8 @@ public class Parser3 {
 
     private String replaceWords(String str) {
         return str.replace("PI_", "\\Pi_").replace("sigma(", "\\sigma(").replace("sigma_", "\\sigma_")
-                .replace(UNION, "\\cup").replace(INTERSECT, "\\cap").replace(RENAME, "\\rho");
-//                .replace(NATJOIN, "\\bowtie").replace(CROSSJOIN, "\\bigtimes")
-                //.replace(AND1, "\\vee").replace(AND2, "\\land").replace(OR1, "\\wedge").replace(OR2, "\\lor").replace(EXCEPT, "\\-")
-                //.replace(LOJ, "\\leftouterjoin").replace(ROJ, "\\rightouterjoin").replace(FOJ, "\\fullouterjoin");
+                .replace(UNION, "\\cup").replace(INTERSECT, "\\cap");
+//                .replace(RENAME, "\\rho");
     }
 
     public String runTest(String input, int num, Parser3 p) {
