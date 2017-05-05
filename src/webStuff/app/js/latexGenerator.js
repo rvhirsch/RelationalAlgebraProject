@@ -156,7 +156,10 @@ var symbolToLatex = function(expr) {
 		'ω': '\\omega',
 		'ı': '\\imath',
 		'⋈': '\\bowtie',
-		'ȷ': '\\jmath'
+		'ȷ': '\\jmath',
+		'⟗': '\\foj',
+        '⟕': '\\loj',
+        '⟖': '\\roj'
 	}
 	if (typeof symbolToLatexMapping[expr.value] === 'undefined') {
 		latexString = expr.value;
