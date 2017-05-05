@@ -1104,7 +1104,12 @@ public class guiHandler {
 
 //        String sampleQuery2 = "SELECT * FROM Person";
 //        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person NATURAL JOIN Eats) WHERE pizza='cheese' AND money<100)";
-        curQR = db.query(temp);
+        try {
+            curQR = db.query(temp);
+        } catch (SQLException e) {
+            popupMaker("Nice Try Brad");
+            e.printStackTrace();
+        }
 //        setResultTable(db.query(sampleQuery));
 //        System.out.println(db.qrToString(db.query(sampleQuery)));
         setResultTable(curQR);
