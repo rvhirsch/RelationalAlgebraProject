@@ -1,6 +1,9 @@
 import java.util.ArrayList;
 import java.util.Arrays;
 
+/**
+ * Created by Josh
+ */
 public class DBInfo {
     public class TBInfo {
         private String name;

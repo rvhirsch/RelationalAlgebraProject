@@ -1,3 +1,6 @@
+/**
+ * Created by Josh
+ */
 public class queryResult {
     private String[] columnNames;
     private String[] colTypes;

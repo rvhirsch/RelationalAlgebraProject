@@ -6,7 +6,7 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
- * Created by Jwag598
+ * Created by Josh
  */
 public class DB {
     private Connection connection;
