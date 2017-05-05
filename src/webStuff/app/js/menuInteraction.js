@@ -1538,7 +1538,7 @@ var setupMenuEvents = function() {
         e.preventDefault();
         e.stopPropagation();
         var equation = getEquation();
-        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟕', "MathJax_Main");
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟕', "MathJax_Other");
         insertWrapper(symbolWrapper);
     });
 
@@ -1546,7 +1546,7 @@ var setupMenuEvents = function() {
         e.preventDefault();
         e.stopPropagation();
         var equation = getEquation();
-        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟖', "MathJax_Main");
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟖', "MathJax_Other");
         insertWrapper(symbolWrapper);
     });
 
@@ -1554,7 +1554,7 @@ var setupMenuEvents = function() {
         e.preventDefault();
         e.stopPropagation();
         var equation = getEquation();
-        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟗', "MathJax_Main");
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟗', "MathJax_Other");
         insertWrapper(symbolWrapper);
     });
 

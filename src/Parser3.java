@@ -20,9 +20,9 @@ public class Parser3 {
     private final static String OR1 = "\\wedge";
     private final static String OR2 = "\\lor";
     private final static String EXCEPT = "-";
-    private final static String LOJ = "\\leftouterjoin";
-    private final static String ROJ = "\\rightouterjoin";
-    private final static String FOJ = "\\fullouterjoin";
+    private final static String LOJ = "\\loj";
+    private final static String ROJ = "\\roj";
+    private final static String FOJ = "\\foj";
     private final static String GEQ = "\\geq";
     private final static String LEQ = "\\leq";
     private final static String MAX = "\\max";
@@ -239,7 +239,7 @@ public class Parser3 {
                 .replace(LEQ, " <= ").replace(GEQ, " >= ").replace(MAX, " max").replace(MIN, " min").replace(AVG, " avg")
                 .replace(SUM, " sum"). replace(COUNT, " count")
                 .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
-                .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
+                .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL OUTER JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ")
                 .replace("  ", " ");
     }
