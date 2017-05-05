@@ -200,7 +200,7 @@ public class DB {
      * @throws IOException
      * @throws SQLException
      */
-    public String populateDatabase(String path) throws IOException, SQLException {
+    public String populateDatabase(String path) throws IOException {
         //setup the file reader objects
         File file = new File(path);
         BufferedReader br = null;
@@ -266,9 +266,15 @@ public class DB {
             insertQuery += ")";
 
             //insert the table into the database
-            createPS = connection.prepareStatement(createQuery);
-            createPS.executeUpdate();
-            createPS.close();
+            try {
+                createPS = connection.prepareStatement(createQuery);
+                createPS.executeUpdate();
+                createPS.close();
+                System.out.println("Made it: 1");
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return curStream;
+            }
 
 
             //now that we know the general form of the inserts, we can loop and substitute all the values
@@ -278,7 +284,13 @@ public class DB {
                 curStream += " " + curLine;
                 String[] entries = curLine.split(" ");
 
-                insertPS = connection.prepareStatement(insertQuery);
+                try {
+                    insertPS = connection.prepareStatement(insertQuery);
+                    System.out.println("Made it: 3");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return curStream;
+                }
 //                System.out.println("1: " + insertPS.toString());
 
                 for (int z = 0; z < entries.length; z++) {
@@ -286,30 +298,37 @@ public class DB {
                         case ("int"):
                             try {
                                 insertPS.setInt(z + 1, Integer.parseInt(entries[z]));
+                                System.out.println("Made it: 4a");
                             } catch (Exception e) {
                                 return curStream;
                             }
-                            break;
                         case ("string"):
                             try {
                                 insertPS.setString(z + 1, entries[z]);
+                                System.out.println("Made it: 4b");
                             } catch (Exception e) {
                                 return curStream;
                             }
-                            break;
                         case ("boolean"):
                             try {
                                 insertPS.setString(z + 1, entries[z]);
+                                System.out.println("Made it: 4c");
                             } catch (Exception e) {
                                 return curStream;
                             }
-                            break;
                     }
                 }
                 //insert the updates
 //                System.out.println("2: " + insertPS.toString());
-                insertPS.executeUpdate();
-                insertPS.close();
+                try {
+                    System.out.println("Made it: first");
+                    insertPS.executeUpdate();
+                    insertPS.close();
+                    System.out.println("Made it: last");
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                    return curStream;
+                }
             }
         }
         return null;
