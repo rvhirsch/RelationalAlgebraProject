@@ -13,6 +13,9 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
+/**
+ * Created by Josh
+ */
 public class gui extends Application {
     public static void main(String[] args) {
         launch(args);

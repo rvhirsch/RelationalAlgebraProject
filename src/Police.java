@@ -1,5 +1,8 @@
 import java.util.Arrays;
 
+/**
+ * Created by Josh
+ */
 public class Police {
 
     public static Boolean spellChecker(String str, DBInfo dbi) {
