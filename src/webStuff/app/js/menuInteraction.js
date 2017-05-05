@@ -758,6 +758,30 @@ var setupMenuEvents = function() {
         insertWrapper(functionWrapper);
     });
 
+    $(document).on('touchstart mousedown', '#avgButton', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var equation = getEquation();
+            var functionWrapper = new eqEd.FunctionWrapper(equation, 'avg', "MathJax_Main");
+            insertWrapper(functionWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#sumButton', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var equation = getEquation();
+            var functionWrapper = new eqEd.FunctionWrapper(equation, 'sum', "MathJax_Main");
+            insertWrapper(functionWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#countButton', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var equation = getEquation();
+            var functionWrapper = new eqEd.FunctionWrapper(equation, 'count', "MathJax_Main");
+            insertWrapper(functionWrapper);
+    });
+
     $(document).on('touchstart mousedown', '#supButton', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -1514,7 +1538,7 @@ var setupMenuEvents = function() {
         e.preventDefault();
         e.stopPropagation();
         var equation = getEquation();
-        var symbolWrapper = new eqEd.OperatorWrapper(equation, 'A', "MathJax_Main");
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟕', "MathJax_Main");
         insertWrapper(symbolWrapper);
     });
 
@@ -1522,7 +1546,7 @@ var setupMenuEvents = function() {
         e.preventDefault();
         e.stopPropagation();
         var equation = getEquation();
-        var symbolWrapper = new eqEd.OperatorWrapper(equation, 'B', "MathJax_Main");
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟖', "MathJax_Main");
         insertWrapper(symbolWrapper);
     });
 
@@ -1530,7 +1554,7 @@ var setupMenuEvents = function() {
         e.preventDefault();
         e.stopPropagation();
         var equation = getEquation();
-        var symbolWrapper = new eqEd.OperatorWrapper(equation, 'C', "MathJax_Main");
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟗', "MathJax_Main");
         insertWrapper(symbolWrapper);
     });
 

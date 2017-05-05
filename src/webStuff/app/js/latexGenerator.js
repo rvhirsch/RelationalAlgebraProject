@@ -254,7 +254,12 @@ var operatorToLatex = function(expr) {
 		'÷': '\\div',
 		'⋈': '\\bowtie',
 		'⋅': '\\cdot',
-		'=': '='
+		'=': '=',
+		'∪': '\\cup',
+        '∩': '\\cap',
+        '⟗': '\\foj',
+        '⟕': '\\loj',
+        '⟖': '\\roj'
 	};
 	latexString = operatorToLatexMapping[expr.value];
 	return latexString;

@@ -19,7 +19,7 @@ eqEd.FontMetrics = function() {
                   '≡', '≅', '≠', '∼', '∝',
                   '≺', '⪯', '⊂', '⊆', '≻','∪','∩','⋈','ρ',
                   '⪰', '⊥', '∣', '∥', ':',
-                  '′'];
+                  '⟗', '⟕', '⟖', '′'];
     this.MathJax_MainItalic = ['ı', 'ȷ'];
     // Lists all characters which need to be rendered in an italic font. 
     this.MathJax_MathItalic = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h', 'i', 
@@ -53,7 +53,7 @@ eqEd.FontMetrics = function() {
                             'α', 'γ', 'ε', 'ϵ', 'η', 'ι',
                             'κ', 'μ', 'ν', 'π', 'ϖ', 'ρ',
                             'ϱ', 'σ', 'ς','τ', 'υ', 'φ', 
-                            'χ', 'ω'];
+                            'χ', 'ω', '⟗', '⟕', '⟖'];
     this.mediumCharacters = ['i', 'j','t'];
     this.tallCharacters = ['b', 'd', 'f', 'h', 'k', 'l', 'A', 'B', 'C', 'D', 'E', 'F',
                            'G', 'H', 'I', 'J', 'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R',

@@ -25,7 +25,11 @@ public class Parser3 {
     private final static String FOJ = "\\fullouterjoin";
     private final static String GEQ = "\\geq";
     private final static String LEQ = "\\leq";
-
+    private final static String MAX = "\\max";
+    private final static String MIN = "\\min";
+    private final static String AVG = "\\avg";
+    private final static String SUM = "\\sum";
+    private final static String COUNT = "\\count";
 
     private final static String REGEX = "(?=[\\\\({])";
 
@@ -232,10 +236,12 @@ public class Parser3 {
 
     private String replacePrev(String str) {
         return str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
-                .replace(LEQ, "<=").replace(GEQ, ">=")
+                .replace(LEQ, " <= ").replace(GEQ, " >= ").replace(MAX, " max").replace(MIN, " min").replace(AVG, " avg")
+                .replace(SUM, " sum"). replace(COUNT, " count")
                 .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL JOIN ")
-                .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ");
+                .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ")
+                .replace("  ", " ");
     }
 
     private String replaceWords(String str) {
