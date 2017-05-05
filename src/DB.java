@@ -1,10 +1,13 @@
+
 import org.h2.jdbc.JdbcPreparedStatement;
 
 import java.io.*;
 import java.sql.*;
 import java.util.ArrayList;
 
-
+/**
+ * Created by Jwag598
+ */
 public class DB {
     private Connection connection;
 
