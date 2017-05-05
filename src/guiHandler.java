@@ -1019,11 +1019,9 @@ public class guiHandler {
             e.printStackTrace();
         }
         String dberror = null;
-        try {
-            dberror = db.populateDatabase(dbFileField.getText());
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
+
+        dberror = db.populateDatabase(dbFileField.getText());
+
         if (dberror != null) {
                 popupMaker("Unable to load database file, error in: \n\"" + dberror + "\"");
                 return;
