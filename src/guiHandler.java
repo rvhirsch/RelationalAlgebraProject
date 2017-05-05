@@ -780,7 +780,7 @@ public class guiHandler {
             resultTableView = table;
 
             if (tabResultPane.getTabs() != null) {
-                if (tabResultPane.getTabs().get(0).getText().equalsIgnoreCase("Lorem")) {
+                if (tabResultPane.getTabs().get(0).getText().equalsIgnoreCase("TableName")) {
                     tabResultPane.getTabs().remove(0);
                 }
             }
@@ -846,6 +846,8 @@ public class guiHandler {
             tabResultPane.getTabs().add(tab);
             tabResultPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
             tabResultPane.getTabs().get(0).setClosable(false);
+            SingleSelectionModel trpSM = tabResultPane.getSelectionModel();
+            trpSM.select(tab);
         }
     }
 
@@ -1028,7 +1030,7 @@ public class guiHandler {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        addLog("Cleared and Populated Database from File: " + dbFileField.getText());
+        addLog("Populated Database from File: " + dbFileField.getText());
     }
 
     @FXML private void loadDBButton() {
@@ -1050,7 +1052,7 @@ public class guiHandler {
     @FXML private void clearDBButton() throws Exception {
         db.clearDatabase();
         setDBTabPane();
-        addLog("Cleared Database");
+        addLog("Cleared the Database");
     }
 
     @FXML private void clearButton() throws Exception {
@@ -1067,6 +1069,7 @@ public class guiHandler {
             writer.print(logTextArea.getText());
             writer.close();
         }
+        addLog("Saved the Log");
     }
 
     @FXML private void clearResultTabButton() {
@@ -1086,6 +1089,7 @@ public class guiHandler {
         tab.setContent(tableView);
 
         tabResultPane.getTabs().add(tab);
+        addLog("Cleared Result Tabs");
     }
 
     @FXML private void executeButton() throws Exception {
@@ -1113,18 +1117,22 @@ public class guiHandler {
 //        setResultTable(db.query(sampleQuery));
 //        System.out.println(db.qrToString(db.query(sampleQuery)));
         setResultTable(curQR);
+
+        addLog("Executed Statement: " + temp);
     }
 
     @FXML private void openEditDBWindowButton() throws Exception{
         updateAllDBDisplays();
         this.initializeEditDBWindow();
         editDBStage.showAndWait();
+        addLog("Edited the database through the helper window");
    }
 
    @FXML private void getLatexSrc() {
        String ls = (String)webEngine.executeScript("getLatex()");
 //       System.out.println(ls);
        latexSourceTextArea.setText(ls);
+       addLog("Saved the LaTeX source");
    }
 
    @FXML private void getEqImg() throws IOException {
@@ -1138,6 +1146,8 @@ public class guiHandler {
         RenderedImage renderedImage = SwingFXUtils.fromFXImage(snapshot, null);
 
         ImageIO.write(renderedImage, "png", file);
+
+        addLog("Saved an image of the equation");
    }
 
    @FXML private void saveDBSrc() throws FileNotFoundException {
@@ -1154,6 +1164,8 @@ public class guiHandler {
            writer.print(str);
            writer.close();
        }
+
+       addLog("Saved the database source");
    }
 
    @FXML private void saveResult() throws FileNotFoundException, SQLException {
@@ -1168,5 +1180,7 @@ public class guiHandler {
            writer.print(db.qrToString(curQR));
            writer.close();
        }
+
+       addLog("Saved the Result");
    }
 }
