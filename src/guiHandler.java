@@ -626,12 +626,12 @@ public class guiHandler {
                 }
 
                 if(!Arrays.asList(rowsToClear).contains(true)) {
-                    popupMaker("Please select atleast one row to remove");
+                    popupMaker("Please select at least one row to remove");
                     return;
                 }
 
                 for (int y = 0; y < rowsToClear.length; y++) {
-                    if (rowsToClear[y] == true) {
+                    if (rowsToClear[y]) {
                         Object[][] data = {colNames,editDBClearRowTableView.getItems().get(y)};
 
                         System.out.println(Arrays.deepToString(data));
@@ -859,13 +859,14 @@ public class guiHandler {
         queryResult[] qr = db.getEverything();
 
         if (qr.length == 0) {
-            Tab tab = new Tab("Lorem");
+            Tab tab = new Tab("TableName");
             TableView tableView = new TableView();
 
-            TableColumn tabCol = new TableColumn("Ipsum");
-            TableColumn tabCol2 = new TableColumn("Dolar");
-            TableColumn tabCol3 = new TableColumn("Sit");
-            TableColumn tabCol4 = new TableColumn("Amet");
+            TableColumn tabCol = new TableColumn("Col1");
+            TableColumn tabCol2 = new TableColumn("Col2");
+            TableColumn tabCol3 = new TableColumn("Col3");
+            TableColumn tabCol4 = new TableColumn("Col4");
+
             tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
 
             tab.setContent(tableView);
@@ -991,15 +992,16 @@ public class guiHandler {
 
         TableView tableView = new TableView();
 
-        TableColumn tabCol = new TableColumn("Ipsum");
-        TableColumn tabCol2 = new TableColumn("Dolar");
-        TableColumn tabCol3 = new TableColumn("Sit");
-        TableColumn tabCol4 = new TableColumn("Amet");
+        TableColumn tabCol = new TableColumn("Col1");
+        TableColumn tabCol2 = new TableColumn("Col2");
+        TableColumn tabCol3 = new TableColumn("Col3");
+        TableColumn tabCol4 = new TableColumn("Col4");
+
         tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
 
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        Tab tab = new Tab("Lorem");
+        Tab tab = new Tab("TableName");
         tab.setContent(tableView);
 
         tabResultPane.getTabs().add(tab);
@@ -1018,7 +1020,7 @@ public class guiHandler {
             e.printStackTrace();
         }
         if (dberror != null) {
-                popupMaker("Was unable to load your database file, error in: \n\"" + dberror + "\"");
+                popupMaker("Unable to load database file, error in: \n\"" + dberror + "\"");
                 return;
             }
         try {
@@ -1048,7 +1050,7 @@ public class guiHandler {
     @FXML private void clearDBButton() throws Exception {
         db.clearDatabase();
         setDBTabPane();
-        addLog("Cleared The Database");
+        addLog("Cleared Database");
     }
 
     @FXML private void clearButton() throws Exception {
@@ -1072,15 +1074,15 @@ public class guiHandler {
 
         TableView tableView = new TableView();
 
-        TableColumn tabCol = new TableColumn("Ipsum");
-        TableColumn tabCol2 = new TableColumn("Dolar");
-        TableColumn tabCol3 = new TableColumn("Sit");
-        TableColumn tabCol4 = new TableColumn("Amet");
+        TableColumn tabCol = new TableColumn("Col1");
+        TableColumn tabCol2 = new TableColumn("Col2");
+        TableColumn tabCol3 = new TableColumn("Col3");
+        TableColumn tabCol4 = new TableColumn("Col4");
         tableView.getColumns().addAll(tabCol, tabCol2, tabCol3, tabCol4);
 
         tableView.setColumnResizePolicy(TableView.UNCONSTRAINED_RESIZE_POLICY);
 
-        Tab tab = new Tab("Lorem");
+        Tab tab = new Tab("TableName");
         tab.setContent(tableView);
 
         tabResultPane.getTabs().add(tab);
