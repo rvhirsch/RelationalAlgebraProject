@@ -235,13 +235,77 @@ public class Parser3 {
     }
 
     private String replacePrev(String str) {
-        return str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
+        str = str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
                 .replace(LEQ, " <= ").replace(GEQ, " >= ").replace(MAX, " max").replace(MIN, " min").replace(AVG, " avg")
                 .replace(SUM, " sum"). replace(COUNT, " count")
                 .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
-                .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ").replace(FOJ, " FULL OUTER JOIN ")
+                .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ")
                 .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ")
                 .replace("  ", " ");
+
+        System.out.println("str = " + str);
+        str = replaceFOJ(FOJ, str);
+
+        return str;
+    }
+
+    public String replaceFOJ(String old, String input) {
+        int i = input.indexOf(old);
+
+        System.out.println("\ti = " + i);
+
+        if (i < 0) {
+            return input;
+        }
+
+        String partBefore = input.substring(0, i);
+        String partAfter  = input.substring(i + old.length());
+        System.out.println("\tpb = " + partBefore);
+        System.out.println("\tpa = " + partAfter);
+
+        String newWord = getNewFOJ(input, i);
+
+        String str = partBefore + newWord + partAfter;
+
+        return replaceFOJ(FOJ, str);
+    }
+
+
+    private String getNewFOJ(String str, int i) {
+
+        String left = getLeftTable(str, i);
+        System.out.println("\tleft = " + left);
+
+        String right = getRightTable(str, i + FOJ.length());
+        System.out.println("\tright = " + right);
+
+        String newWord = " LEFT JOIN " + right + " \\union " + left + " RIGHT JOIN ";
+
+        System.out.println("\tnw = " + newWord);
+
+        return newWord;
+    }
+
+    private String getLeftTable(String str, int pos) {
+        String left = "";
+        char c = str.charAt(pos);
+        while (c != '(' && pos >= 0) {
+            if (c != ' ' && c != '\\') {
+                left = str.charAt(pos) + left;
+            }
+            pos--;
+            c = str.charAt(pos);
+        }
+        return left;
+    }
+
+    private String getRightTable(String str, int pos) {
+        String right = "";
+        while (str.charAt(pos) != ')' && pos < str.length()) {
+            right += str.charAt(pos);
+            pos++;
+        }
+        return right;
     }
 
     private String replaceWords(String str) {
@@ -306,10 +370,10 @@ public class Parser3 {
         String sampleInput5 = "\\Pi_{name, age}(\\sigma_{age > 10 || name == 'sally'}(Eats \\bowtie (Person \\cap Pizzeria)))";
         String sampleInput6 = "\\sigma(Person)";
         String sampleInput7 = "_{age}\\Pi_{name}(Person)";
-        String sampleInput8 = "\\pi_{name}(Person)";
+        String sampleInput8 = "\\sigma(Person \\foj Eats)";
 
         // actual test stuff //
-        String input = sampleInput5;
+        String input = sampleInput8;
 
         Parser3 p = new Parser3(input, info);
         System.out.println("Latex: " + input);
