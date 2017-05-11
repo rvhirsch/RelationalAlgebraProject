@@ -277,7 +277,8 @@ public class Parser3 {
 
         String word = " LEFT JOIN " + left + ") \\cup\\sigma(" + right + " RIGHT JOIN " + left + ")";
 
-        String str = partBefore + word + partAfter.substring(right.length());
+        System.out.println(partAfter + right.length());
+        String str = partBefore + word + partAfter.substring(right.length()-1);
 
         return replaceFOJ(FOJ, str);
     }

@@ -847,8 +847,7 @@ public class guiHandler {
             }
 
             tabResultPane.getTabs().add(tab);
-            tabResultPane.setTabClosingPolicy(TabPane.TabClosingPolicy.ALL_TABS);
-            tabResultPane.getTabs().get(0).setClosable(false);
+            tabResultPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
             SingleSelectionModel trpSM = tabResultPane.getSelectionModel();
             trpSM.select(tab);
         }
@@ -1111,13 +1110,13 @@ public class guiHandler {
 //        String sampleQuery = "SELECT name FROM (SELECT * FROM (Person NATURAL JOIN Eats) WHERE pizza='cheese' AND money<100)";
         try {
             curQR = db.query(temp);
+            setResultTable(curQR);
         } catch (SQLException e) {
             popupMaker("Nice Try Brad");
             e.printStackTrace();
         }
 //        setResultTable(db.query(sampleQuery));
 //        System.out.println(db.qrToString(db.query(sampleQuery)));
-        setResultTable(curQR);
 
         addLog("Executed Statement: " + temp);
     }
