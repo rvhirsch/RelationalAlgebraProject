@@ -1,3 +1,5 @@
+import javafx.util.Pair;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -6,7 +8,7 @@ import java.util.Arrays;
  */
 public class Parser3 {
     // all possible commands - I hope...
-    private final static String PI = "\\pi_";
+    private final static String PI = "\\Pi_";
     private final static String SIGMA1 = "\\sigma";
     private final static String SIGMA2 = "\\sigma_";
     private final static String AGGR = "\\gamma_";
@@ -62,7 +64,7 @@ public class Parser3 {
         for (int i=0; i<this.texArray.length; i++) {
             curr = this.texArray[i];
 
-//            System.out.println("curr: " + curr);
+            System.out.println("curr: " + curr);
 
             if (curr.equals("_") || curr.equals("(_")) {     // group in next spot(s) in array
                 group = getCols(i);     // same code as what getGroup() would have
@@ -81,35 +83,32 @@ public class Parser3 {
             else if (curr.equals(SIGMA2)) {
                 i = sigma2Select(i, group);
             }
-            else if (curr.equals(AGGR)) {
-
-            }
-            else if (curr.contains(NATJOIN)) {
-                this.sql += curr.replace(NATJOIN, " NATURAL JOIN ");
-            }
-            else if (curr.contains(INTERSECT)) {
-                this.sql += curr.replace(INTERSECT, " INTERSECT ");
-            }
-            else if (curr.contains(UNION)) {
+//            else if (curr.contains(NATJOIN)) {
+//                this.sql += curr.replace(NATJOIN, " NATURAL JOIN ");
+//            }
+//            else if (curr.equals(INTERSECT)) {
+//                this.sql += curr.replace(INTERSECT, " INTERSECT ");
+//            }
+            else if (curr.equals(UNION)) {
                 this.sql += curr.replace(UNION, " UNION ");
             }
-            else if (curr.contains(CROSSJOIN)) {
-                this.sql += curr.replace(CROSSJOIN, " CROSS JOIN ");
-            }
-            else if (curr.contains(LOJ)) {
-                this.sql += curr.replace(LOJ, " LEFT JOIN ");
-            }
-            else if (curr.contains(ROJ)) {
-                this.sql += curr.replace(ROJ, " RIGHT JOIN ");
-            }
-            else if (curr.contains(FOJ)) {
-                this.sql += curr.replace(FOJ, " FULL JOIN ");
-            }
+//            else if (curr.contains(CROSSJOIN)) {
+//                this.sql += curr.replace(CROSSJOIN, " CROSS JOIN ");
+//            }
+//            else if (curr.contains(LOJ)) {
+//                this.sql += curr.replace(LOJ, " LEFT JOIN ");
+//            }
+//            else if (curr.contains(ROJ)) {
+//                this.sql += curr.replace(ROJ, " RIGHT JOIN ");
+//            }
+//            else if (curr.contains(FOJ)) {
+//                this.sql += curr.replace(FOJ, " FULL JOIN ");
+//            }
             else if (curr.contains(EXCEPT)) {
                 this.sql += curr.replace(EXCEPT, " EXCEPT ");
             }
             else {
-//                System.out.println("thing: " + curr);
+//                System.out.println("curr = " + curr);
                 this.sql += curr;
             }
         }
@@ -128,13 +127,12 @@ public class Parser3 {
         i += cols.split(REGEX).length + 1;
 
         String from = getFrom(i);
-        from = from.substring(1, from.length()-1);
+//        from = from.substring(1, from.length()-1);
 
         Parser3 psql = new Parser3(from, info);
         from = psql.sql;
 
-        int split = from.split(REGEX).length;
-//      i += from.split(REGEX).length;
+        int split = from.split(" ").length;
         i += split + 1;
 
         if (split > 1) {
@@ -153,12 +151,9 @@ public class Parser3 {
 
     private int sigma1Select(int i, String group) {
         String from = getFrom(i+1);
-        from = from.substring(1, from.length()-1);
-
-        System.out.println("from: " + from);
 
         int split = from.split(REGEX).length;
-        i += split + 1;
+        i += split;
 
         if (split > 1) {
             this.sql += "SELECT * FROM (" + from + ")";
@@ -183,7 +178,8 @@ public class Parser3 {
         String from = getFrom(i);
         Parser3 psql = new Parser3(replaceWords(from), info);
         from = psql.sql;
-        i += from.split(REGEX).length + 1;
+
+        i += from.split(" ").length + 1;
 
         this.sql += "SELECT * FROM " + from + " WHERE " + where;
 
@@ -204,7 +200,19 @@ public class Parser3 {
             curr = this.texArray[i];
             if (curr.contains(")")) {
                 from += curr;
-//                System.out.println("from curr: " + from);
+
+                if (from.charAt(0) == '(') {
+                    from = from.substring(1);
+                }
+                if (from.charAt(from.length()-1) == ')') {
+                    from = from.substring(0, from.length()-1);
+                }
+                if (from.charAt(from.length()-2) == ')' && from.charAt(from.length()-1) == ' ') {  // check for trailing spaces
+                    from = from.substring(0, from.length()-2);
+                }
+
+//                System.out.println("from: " + from);
+
                 return from;
             }
             else {
@@ -238,13 +246,15 @@ public class Parser3 {
         str = str.replace(":", ", ").replace(AND1, " && ").replace(AND2, " && ").replace(OR1, " || ").replace(OR2, " || ")
                 .replace(LEQ, " <= ").replace(GEQ, " >= ").replace(MAX, " max").replace(MIN, " min").replace(AVG, " avg")
                 .replace(SUM, " sum"). replace(COUNT, " count")
-                .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ").replace(EXCEPT, "-")
+                .replace(NATJOIN, " NATURAL JOIN ").replace(CROSSJOIN, " CROSS JOIN ")
+//                .replace(EXCEPT, "-")
                 .replace(LOJ, " LEFT JOIN ").replace(ROJ, " RIGHT JOIN ")
-                .replace(UNION, " UNION ").replace(INTERSECT, " INTERSECT ")
+//                .replace(UNION, " UNION ")
+                .replace(INTERSECT, " INTERSECT ")
                 .replace("  ", " ");
 
-        System.out.println("str = " + str);
         str = replaceFOJ(FOJ, str);
+//        System.out.println("\tstr = " + str);
 
         return str;
     }
@@ -252,38 +262,36 @@ public class Parser3 {
     public String replaceFOJ(String old, String input) {
         int i = input.indexOf(old);
 
-        System.out.println("\ti = " + i);
-
         if (i < 0) {
             return input;
         }
 
         String partBefore = input.substring(0, i);
         String partAfter  = input.substring(i + old.length());
-        System.out.println("\tpb = " + partBefore);
-        System.out.println("\tpa = " + partAfter);
+//        System.out.println("\tpb = " + partBefore);
+//        System.out.println("\tpa = " + partAfter);
 
-        String newWord = getNewFOJ(input, i);
+        Pair<String, String> newWord = getNewFOJ(input, i);
+        String right = newWord.getKey();
+        String left = newWord.getValue();
 
-        String str = partBefore + newWord + partAfter;
+        String word = " LEFT JOIN " + left + ") \\cup\\sigma(" + right + " RIGHT JOIN " + left + ")";
+
+        String str = partBefore + word + partAfter.substring(right.length());
 
         return replaceFOJ(FOJ, str);
     }
 
 
-    private String getNewFOJ(String str, int i) {
+    private Pair<String, String> getNewFOJ(String str, int i) {
 
         String left = getLeftTable(str, i);
-        System.out.println("\tleft = " + left);
+//        System.out.println("\tleft = " + left);
 
         String right = getRightTable(str, i + FOJ.length());
-        System.out.println("\tright = " + right);
+//        System.out.println("\tright = " + right);
 
-        String newWord = " LEFT JOIN " + right + " \\union " + left + " RIGHT JOIN ";
-
-        System.out.println("\tnw = " + newWord);
-
-        return newWord;
+        return new Pair<String, String>(left, right);
     }
 
     private String getLeftTable(String str, int pos) {
