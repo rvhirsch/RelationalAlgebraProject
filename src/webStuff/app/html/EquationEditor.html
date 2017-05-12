@@ -504,7 +504,7 @@
       });
       $('#toLatex').on('click', function() {
         var jsonObj = $('.eqEdEquation').data('eqObject').buildJsonObj();
-        $('#ContentLatex').html(generateLatex(jsonObj.operands.topLevelContainer));
+        $('#ContentLatex').html(generateLatex(jsonObj));
       });
     </script>
     <textarea id="TextJSON"></textarea>

@@ -104,7 +104,6 @@
             <Button fx:id="getLatexSrcButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" mnemonicParsing="false" onAction="#getLatexSrc" prefHeight="112.0" prefWidth="99.0" text="Get LaTeX Source" wrapText="true" />
             <VBox alignment="TOP_RIGHT" prefHeight="113.0" prefWidth="60.0" spacing="5.0">
                <children>
-                  <Button fx:id="clearButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" prefHeight="50.0" prefWidth="160.0" text="Clear" />
                   <Button fx:id="executeButton" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" mnemonicParsing="false" onAction="#executeButton" prefHeight="50.0" prefWidth="160.0" text="Execute" />
                </children>
                <padding>

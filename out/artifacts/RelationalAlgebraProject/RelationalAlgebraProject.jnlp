@@ -8,7 +8,7 @@
     <update check="background"/>
     <resources>
         <j2se version="9-ea+" href="http://java.sun.com/products/autodl/j2se"/>
-        <jar href="RelationalAlgebraProject.jar" size="2305709" download="eager"/>
+        <jar href="RelationalAlgebraProject.jar" size="2305696" download="eager"/>
         <jar href="controlsfx-8.40.12.jar" size="996389" download="eager"/>
         <jar href="h2-1.4.193.jar" size="1791969" download="eager"/>
     </resources>
