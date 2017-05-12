@@ -1,7 +1,8 @@
 eqEd.FontMetrics = function() {
     this.fontSizes = ["fontSizeSmallest", "fontSizeSmaller", "fontSizeNormal"];
-    this.fontStyles = ["MathJax_MathItalic", "MathJax_Main", "MathJax_MainItalic", "MathJax_Size1", "MathJax_Size2","MathJax_Size3", "MathJax_Size4"];
+    this.fontStyles = ["MathJax_Other", "MathJax_MathItalic", "MathJax_Main", "MathJax_MainItalic", "MathJax_Size1", "MathJax_Size2","MathJax_Size3", "MathJax_Size4"];
     // Lists all characters which need to be rendered in a normal font.
+    this.MathJax_Other = ['⟗', '⟕', '⟖']
     this.MathJax_Main = ['0', '1', '2', '3', '4', '5', '6', '7', '8', 
                  '9', '−', '÷', '⋅', '≈', '*',
                  '-', '=', '+', '/', '<', '>', '≤', 
@@ -17,7 +18,7 @@ eqEd.FontMetrics = function() {
                   'Ω', '∈', '⃗', '¯', '◦',
                   '×', '±', '∧', '∨', '∖',
                   '≡', '≅', '≠', '∼', '∝',
-                  '≺', '⪯', '⊂', '⊆', '≻',
+                  '≺', '⪯', '⊂', '⊆', '≻','∪','∩','⋈','ρ',
                   '⪰', '⊥', '∣', '∥', ':',
                   '′'];
     this.MathJax_MainItalic = ['ı', 'ȷ'];
@@ -28,7 +29,7 @@ eqEd.FontMetrics = function() {
                  'B', 'C', 'D', 'E', 'F', 'G', 'H', 'I', 'J',
                  'K', 'L', 'M', 'N', 'O', 'P', 'Q', 'R', 'S',
                  'T', 'U', 'V', 'W', 'X', 'Y', 'Z', 'Γ', 
-                 'Δ', 'Θ', 'Λ', 'Ξ', 'Π', 
+                 'Δ', 'Θ', 'Λ', 'Ξ', 'Π','∪','∩','⋈','ρ', 
                  'Σ', 'Υ', 'Φ', 'Ψ', 'Ω', 
                  'α', 'β', 'γ', 'δ', 'ε', 
                  'ϵ', 'ζ', 

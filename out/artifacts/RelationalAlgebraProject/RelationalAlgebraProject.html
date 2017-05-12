@@ -1,0 +1,49 @@
+<html>
+    <head>
+        <META http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <SCRIPT src="https://java.com/js/dtjava.js"></SCRIPT><script>
+    function launchApplication(jnlpfile) {
+        dtjava.launch(            {
+                url : 'RelationalAlgebraProject.jnlp'
+            },
+            {
+                javafx : '9-ea+'
+            },
+            {}
+        );
+        return false;
+    }
+</script><script>
+    function javafxEmbedgui() {
+        dtjava.embed(
+            {
+                id : 'gui',
+                url : 'RelationalAlgebraProject.jnlp',
+                placeholder : 'javafx-app-placeholder',
+                width : '600',
+                height : '400'
+            },
+            {
+                javafx : '9-ea+'
+            },
+            {}
+        );
+    }
+    
+            <!-- Embed FX application into web page once page is loaded -->
+    dtjava.addOnloadCallback(javafxEmbedgui);
+</script>
+    </head>
+    <body>
+        <h2>
+            Test page for <b>gui</b>
+        </h2>
+        <b>Webstart:</b><a href="RelationalAlgebraProject.jnlp" onclick="return launchApplication('RelationalAlgebraProject.jnlp');">click to launch this app as webstart</a>
+        <br>
+        <hr>
+        <br>
+        
+        <!-- Applet will be inserted here -->
+        <div id="javafx-app-placeholder"></div>
+    </body>
+</html>

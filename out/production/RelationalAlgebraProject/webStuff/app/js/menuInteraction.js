@@ -758,6 +758,30 @@ var setupMenuEvents = function() {
         insertWrapper(functionWrapper);
     });
 
+    $(document).on('touchstart mousedown', '#avgButton', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var equation = getEquation();
+            var functionWrapper = new eqEd.FunctionWrapper(equation, 'avg', "MathJax_Main");
+            insertWrapper(functionWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#sumButton', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var equation = getEquation();
+            var functionWrapper = new eqEd.FunctionWrapper(equation, 'sum', "MathJax_Main");
+            insertWrapper(functionWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#countButton', function (e) {
+            e.preventDefault();
+            e.stopPropagation();
+            var equation = getEquation();
+            var functionWrapper = new eqEd.FunctionWrapper(equation, 'count', "MathJax_Main");
+            insertWrapper(functionWrapper);
+    });
+
     $(document).on('touchstart mousedown', '#supButton', function (e) {
         e.preventDefault();
         e.stopPropagation();
@@ -1459,6 +1483,102 @@ var setupMenuEvents = function() {
         e.stopPropagation();
         var equation = getEquation();
         var symbolWrapper = new eqEd.SymbolWrapper(equation, '∂', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#cupButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '∪', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#capButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '∩', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#aggButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, 'G', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#bowtieButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⋈', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#rhoButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, 'ρ', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#exceptButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '-', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#lojButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟕', "MathJax_Other");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#rojButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟖', "MathJax_Other");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#fojButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '⟗', "MathJax_Other");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#greaterThanButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '>', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#lessThanButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '<', "MathJax_Main");
+        insertWrapper(symbolWrapper);
+    });
+
+    $(document).on('touchstart mousedown', '#equalsButton', function (e) {
+        e.preventDefault();
+        e.stopPropagation();
+        var equation = getEquation();
+        var symbolWrapper = new eqEd.OperatorWrapper(equation, '=', "MathJax_Main");
         insertWrapper(symbolWrapper);
     });
 

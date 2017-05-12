@@ -1,3 +1,125 @@
+.ratioContainer {
+    Background-color: #fefbd8;
+    padding-top: 93%;    /*put the height to width ratio here*/
+    position: relative;
+    align: center;
+}
+
+.everythingContainer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    bottom: 0;
+    right: 0;
+    text-align: center;
+    font-size: 20px;
+    color: black;
+    align: center;
+}
+
+#insertContentWrapper {
+    align: center;
+    position: relative;
+    overflow: hidden;
+    background-color: #fefbd8;
+    padding-top: 2px;
+    padding-right: 2px;
+    padding-bottom: 2px;
+    padding-left: 2px;
+    margin: 2px 2px 2px 2px;
+}
+
+.contentDivs {
+    align: center;
+    border-radius: 25px;
+    border: 2px solid #36486b;
+    position: relative;
+    float: left;
+    margin: 0.5%;
+    background-color: #618685;
+    box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+}
+
+.listElementImg {
+    float: left;
+    height: 4vw;
+    width: 4vw;
+}
+
+#operatorWrapper {
+    width: 91vw;
+    align: center;
+}
+
+table {
+    width: 91.5vw;
+    align: center;
+    font-size: 3.5vw;
+}
+
+th {
+    border-bottom: 2px solid black;
+}
+
+td {
+    border-right: 1px solid black;
+}
+
+#symbolWrapper {
+    width: 32vw;
+}
+
+.contentList {
+    margin: 1%;
+    width: 10%;
+    float: center;
+    list-style: none;
+}
+
+.listElement {
+    position: relative;
+    background: transparent;
+    cursor: pointer;
+    font-size: 5vw;
+}
+
+.listElement:hover {
+   border-radius: 15px;
+   background: #36486b;
+}
+
+.listElementImg:hover {
+   border-radius: 15px;
+   background: #36486b;
+}
+
+.listElement:hover .toolTipText {
+    visibility: visible;
+    opacity: 0.75;
+}
+
+.toolTipText {
+    font-family: "Times New Roman", Times, serif;
+    font-style: normal;
+    display: inline-block;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 1s;
+    width: 25vw;
+    font-size: 3vw;
+    background-color: #36486b;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 5px 0;
+
+    /* Position the tooltip */
+    position: absolute;
+    z-index: 1;
+    left: 105%;
+    bottom: 0%;
+}
+
 .eqEdEquation {
     position: relative;
     line-height: 1;
@@ -30,6 +152,29 @@
     -ms-user-select: none;
     user-select: none;
     -webkit-tap-highlight-color: rgba(0, 0, 0, 0) !important;
+}
+
+.dicks {
+    float: left;
+    font-weight: bold;
+    font-size: 2.2vw;
+}
+
+.boobs {
+    float: right;
+    font-weight: bold;
+    font-size: 2.2vw;
+}
+
+.yomommuh {
+    float: right;
+    font-weight: bold;
+    font-size: 2.2vw;
+
+}
+
+#timesButton {
+    font-family: DejaVu Serif;
 }
 
 .fontTest {
@@ -242,7 +387,7 @@ div.activeContainer {
 }
 
 #loadingMessageOuter {
-    width: 100px; 
+    width: 100px;
     height: 64px;
 }
 
@@ -266,7 +411,7 @@ div.activeContainer {
     width:100%;
     display:inline-block;
 }
- 
+
 /*----- Tab Links -----*/
 /* Clearfix */
 .tab-links:after {
@@ -290,7 +435,7 @@ div.activeContainer {
     display:inline-block;
     list-style:none;
 }
- 
+
 .tab-links a {
     padding:9px 15px;
     display:inline-block;
@@ -332,7 +477,7 @@ div.activeContainer {
     width: 700px;
     background: #9C9C9C;
 }
- 
+
 .tab {
     display:none;
 }
